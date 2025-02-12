@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  5.x                                   |
+|  \\    /   O peration     | Version:  6.x                                   |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -19,8 +19,8 @@ FoamFile
 //  the new x positions are length/2 +- centre x coordinate (changed within
 //  dakota.sh) - Do not change the line position of the next two entries.
 
-x1 .029449;
-x2 .040551;
+x1 .022170;
+x2 .047830;
 
 convertToMeters 1;
 

@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  5.x                                   |
+|  \\    /   O peration     | Version:  6.x                                   |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -35,23 +35,32 @@ solvers
 
 PIMPLE
 {
-    nNonOrthogonalCorrectors 0;
-
+    //- If the transient solution tends towards a steady state solution,
+    //  end the calculation after the residual control is reached
     residualControl
     {
-        h
-        {
-            relTol  0;
-            tolerance 1e-5;
-        }
+        h       4e-4;
     }
 }
 
+//- Relaxation factors applied to the fields or equations in the outer loops
+//  If nOuterCorrectors is not used, no underrelaxation should be placed.
+//  Always use the *.Final factor too, only you really know what your are doing
+//  ++ Relaxation of the final outer correction is possible, if the residual
+//     controls are very strict. 
 relaxationFactors
 {
+    //- Relaxation of the equation: 
+    //  Factor: -1 disables the usage
+    //  Factor: 1 makes the matrix diagonal dominant or at least equal
+    //          --> matrix might be manipulated
+    //  Factor: 0 < alpha < 1; underrelaxation - make matrix diagonal dominat
+    //  Factor: alpha > 1; over-relaxation - make matrix diagonal dominat weak
+    //          --> can be used in some cases, generally not stable
     equations
     {
-        h     0.8;
+        h               0.85;
+        hFinal          1;
     }
 }
 

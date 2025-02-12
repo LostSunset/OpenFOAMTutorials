@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  5.x                                   |
+|  \\    /   O peration     | Version:  6.x                                   |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -57,15 +57,12 @@ solvers
 
 PIMPLE
 {
+    //- Due to nOuterCorr = 1 --> PISO algorihm
     nOuterCorrectors    1;
-    nCorrectors         2;
+    nCorrectors         2;      // Pressure correction equation two times
     nNonOrthogonalCorrectors 0;
     momentumPredictor   false;
 }
 
-cache
-{
-    grad(U);
-}
 
 // ************************************************************************* //

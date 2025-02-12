@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  5.x                                   |
+|  \\    /   O peration     | Version:  6.x                                   |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -141,9 +141,12 @@ sixDoFRigidBodyMotionCoeffs
     //accelerationDumping 0.1;
 
 
-    //- Motion Solver (for AMI not really needed)
+    //- Motion Solver (for AMI not really needed); more related to 
+    //  moving rigids while the mesh is deformed - not with AMI
+    //  Options:
     //  Newmark
     //  Crank-Nicolsen
+    //  and others possible
     solver
     {
         type Newmark;

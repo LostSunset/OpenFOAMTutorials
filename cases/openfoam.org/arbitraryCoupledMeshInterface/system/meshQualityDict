@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  5.x                                   |
+|  \\    /   O peration     | Version:  6.x                                   |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -15,10 +15,10 @@ FoamFile
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 // Include defaults parameters from master dictionary
-#include "$WM_PROJECT_DIR/etc/caseDicts/meshQualityDict"
+#includeEtc "caseDicts/mesh/generation/meshQualityDict"
 
 //- minFaceWeight (0 -> 0.5)
 minFaceWeight 0.02;
-maxNonOrtho 180;
+maxNonOrtho 84;
 
 // ************************************************************************* //

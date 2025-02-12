@@ -8,7 +8,7 @@
 #
 # A hybrid sampling method is used to check out different results for
 # different design quantities. An optimization is not done here but can
-# be added simply by change the method. 
+# be added simply by change the method.
 #
 # The method that is used it the Latin Hypercube Sampling (LHS)
 #-----------------------------------------------------------------------------
@@ -23,7 +23,7 @@ environment
 
 method
     sampling
-        sample_type = lhs 
+        sample_type = lhs
         samples     = 80
         seed        = 124523
 
@@ -36,8 +36,8 @@ variables
     continuous_design = 3
         descriptors   = 'angle1'    'angle2'    'length'
         initial_point =    0           0         0.01
-        lower_bounds  =    0           0         0.005 
-        upper_bounds  =  180         180         0.03 
+        lower_bounds  =    0           0         0.005
+        upper_bounds  =  180         180         0.03
 
 
 interface

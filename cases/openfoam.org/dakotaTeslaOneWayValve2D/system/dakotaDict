@@ -1,6 +1,8 @@
 # Dakota Input File
 #
-# Automatic Process Chain Simulation
+# This file controls DAKOTA
+# The settings and possibilities can be checkout here
+# https://dakota.sandia.gov/content/64-reference-manual
 #-----------------------------------------------------------------------------
 
 
@@ -18,10 +20,10 @@ model
 
 variables
     continuous_design = 1
-        initial_point	5	
-        lower_bounds    0          
-        upper_bounds    5000      
-        descriptors     'dp' 
+        initial_point	5
+        lower_bounds    0
+        upper_bounds    5000
+        descriptors     'dp'
 
 interface
     fork
@@ -36,7 +38,7 @@ responses
     objective_functions = 1
     numerical_gradients
         method_source dakota
-        interval_type central 
+        interval_type central
        fd_gradient_step_size = 0.1
     no_hessians
 

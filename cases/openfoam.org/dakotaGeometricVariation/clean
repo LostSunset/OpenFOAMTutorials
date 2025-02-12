@@ -20,8 +20,8 @@ rm -rf constant/triSurface/*.eMesh optimizationLog Log analyse*
 rm -rf 0 log* constant/extend* dakotaLog dakotaData* dakota.rst constant/poly*
 rm -rf constant/triSurface/baffles1.stl system/dakotaParameters
 rm -rf system/rotateBaffles Tmin Tmax Taverage constant/triS*/baffles2.stl
-rm -rf results S4 *.out constant/triSurface/baffle1.stl
-rm -rf cons*/triSu*/baffle2.stl system/dakotaParameter
+rm -rf results S4 *.out constant/triSurface/baffle1.stl .dakotaInput*
+rm -rf cons*/triSu*/baffle2.stl system/dakotaParameter .optimization*
 
 
 #------------------------------------------------------------------------------

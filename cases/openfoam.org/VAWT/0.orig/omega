@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  5.x                                   |
+|  \\    /   O peration     | Version:  6.x                                   |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -35,7 +35,7 @@ boundaryField
     inlet
     {
         type            turbulentMixingLengthFrequencyInlet;
-        mixingLength    4*0.08/3.3*0.07;
+        mixingLength    4*0.08/3.3*0.07; // Inlet hydraulic diameter * 0.07
         value           $internalField;
     }
 

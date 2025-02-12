@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  5.x                                   |
+|  \\    /   O peration     | Version:  6.x                                   |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -79,44 +79,8 @@ solvers
 
 PIMPLE
 {
-    correctPhi          yes;
-    nOuterCorrectors    3;
     nCorrectors         2;
     nNonOrthogonalCorrectors 0;
-    residualControl
-    {
-        S
-        {
-            relTol      0;
-            tolerance   1e-6;
-        }
-
-        U
-        {
-            relTol      0;
-            tolerance   1e-5;
-        }
-
-        p
-        {
-            relTol      0;
-            tolerance   1e-3;
-        }
-
-    }
-}
-
-relaxationFactors
-{
-    fields
-    {
-        p               0.3;
-    }
-    equations
-    {
-        "(U|k|S|omega)"   0.7;
-        "(U|k|S|omega)Final" 1.0;
-    }
 }
 
 

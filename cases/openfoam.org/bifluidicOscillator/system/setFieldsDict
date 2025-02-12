@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  5.x                                   |
+|  \\    /   O peration     | Version:  6.x                                   |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -17,11 +17,13 @@ FoamFile
 
 defaultFieldValues
 (
+    //- Set alpha everywhere to zero
     volScalarFieldValue alpha.water 0
 );
 
 regions
 (
+    //- Set alpha to 1 in the box
     boxToCell
     {
         box (0 -1 -1) (0.070 1 1);

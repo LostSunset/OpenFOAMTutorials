@@ -1,15 +1,13 @@
 #!/bin/bash
 #------------------------------------------------------------------------------#
-#                                                                              #
-#   A   utomatic    |  Build by Tobias Holzmann                                #
-#   O   ptimization |  Version 3.1.0                                           #
-#   P   rocess      |                                                          #
-#   C   chain       |                                                          #
-#                                                                              #
-#------------------------------------------------------------------------------#
 #
 # Description
-#   Run the dakota tool and run the process chain
+#   This file is called from DAKOTA each loop
+#   deprepro copies the file 0/p.dakota to 0/p and modifies
+#   the entries inside 0/p based on the arguments of $1 (DAKOTA related)
+#   After that, a normal bash script prepares the FOAM, runs it and
+#   does some analysis.
+#   At the end, the result is catched up and sent back to DAKOTA ($2)
 #
 # ------------------------------------------------------------------------------
 
@@ -89,6 +87,7 @@ dprepro $1 0/p.dakota 0/p
 
 
     # Remove time directorys (reg expression would be nicer)
+    # If you want to check out results, comment the next line
     #---------------------------------------------------------------------------
     rm -rf 1* 2* 3* 4* 5* 6* 7* 8* 9*
 

@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  5.x                                   |
+|  \\    /   O peration     | Version:  6.x                                   |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -15,7 +15,9 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     pimpleDyMFoam;
+// Description of the different keywords are given in the User Guide
+
+application     pimpleFoam;
 
 startFrom       latestTime;
 
@@ -33,11 +35,11 @@ writeInterval   0.005;
 
 purgeWrite      0;
 
-writeFormat     binary;
+writeFormat     binary;     // Recommended to store in binary - no cutoff
 
 writePrecision  6;
 
-writeCompression off;
+writeCompression true;      // Recommended, saves space, read and write time
 
 timeFormat      general;
 
@@ -51,24 +53,47 @@ maxCo           0.8;
 
 maxDeltaT       0.001;
 
+
+//- Include libraries in order to get access
+//  Run time loadable | not linked in the solver itself - powerful option
 libs
 (
+    //- Include the solverFunctionObjects to get access to build passive
+    //  scalar equations on the fly
     "libsolverFunctionObjects.so"
 );
 
+//- Build ower own functions
 functions
 {
     S
     {
+        //- Here we build an new transport equations such as:
+        //  ddt(rho, S) + div(phi,S) + laplacian(D,S) == Q 
+        //  The source term Q can be modelled with the fvOptions
+        //  functionality. Attention to the units you specify.
+
         type            scalarTransport;
         writeInterval   outputTime;
         active          false;
+
+        //- Field name 
         field           S;
+
+        //- Schemes used -> system/fvSchemes
         schemesField    S;
+
+        //- Either use auto schemes or manuell added schemes
         autoSchemes     false;
+
+        //- Corrections
         nCorr           0;
+
+        //- Restart on start-up
         resetOnStartUp  false;
 
+        //- Build a source term Q at different points (in this case)
+        //  Highly flexible
         fvOptions
         {
             source
@@ -78,6 +103,8 @@ functions
 
                 scalarSemiImplicitSourceCoeffs
                 {
+                    //- Different selection modes possible such as points or
+                    //  cellZones etc.
                     selectionMode   points;
                     points
                     4( 
@@ -88,9 +115,11 @@ functions
                         (-0.6 -0.23 0.0025)
                     );
 
+                    //- Take care of the specific vs absolute value
                     volumeMode      specific;
                     injectionRateSuSp
                     {
+                        //- Value 2 starting at time t = 0
                         S (2 0);
                     }
                 }
@@ -98,6 +127,8 @@ functions
         };
     }
 
+    //- Additionally, include the residual functionallity. This will save
+    //  the residuals into a file on the fly. Can be monitored using gnuplot
     #includeFunc residuals
 }
 

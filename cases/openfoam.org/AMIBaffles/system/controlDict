@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  5.x                                   |
+|  \\    /   O peration     | Version:  6.x                                   |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -57,6 +57,10 @@ libs
 
 functions
 {
+    // This few lines constructs a passive scalar equation on the fly:
+    // ddt(rho, S) + div(phi, S) == laplacian(muEff, S) + sources
+    // Sources can be added using the fvOption feature
+    // The scalar is named "S" and the diffusion is set to a constant value
     passiveScalar
     {
         type            scalarTransport;
@@ -68,6 +72,7 @@ functions
         resetOnStartUp  false;
     }
 
+    // Save the residuals into postProcessing/residuals/
     #includeFunc residuals
 }
 

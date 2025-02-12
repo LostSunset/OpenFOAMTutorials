@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  15 September 2018                  #
+# Updated on:  02 December 2018                   #
 #-------------------------------------------------#
 # Topic:       6DOF and AMI within a VAWT         #
-# OpenFOAM:    5.x                                #
+# OpenFOAM:    6.x                                #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.de            #
 # Email:       Tobias.Holzmann@Holzmann-cfd.de    #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-5.x"
+foamVersion="OpenFOAM-6.x"
 
 
 #------------------------------------------------------------------------------
@@ -49,7 +49,7 @@ ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
 
 #------------------------------------------------------------------------------
 echo -e "   - Extract feature edges for AMI"
-surfaceFeatureExtract >> logMeshing
+surfaceFeatures >> logMeshing
 
 
 #------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ cp -r 0.orig 0
 
 
 #------------------------------------------------------------------------------
-if [ `which pimpleDyMFoam` ]
+if [ `which pimpleFoam` ]
 then
 
     #--------------------------------------------------------------------------
@@ -96,20 +96,20 @@ then
 
 
     #--------------------------------------------------------------------------
-    echo -e "   - Renumber the mesh again"
+    echo -e "   - Renumber the mesh / important for big meshes -> speed-up"
     mpirun -np 2 renumberMesh -overwrite -parallel >> logSolve
 
 
     #--------------------------------------------------------------------------
     echo -e "   - Start simulation (this will need some time)"
-    mpirun -np 2 pimpleDyMFoam -parallel >> logSolve
+    mpirun -np 2 pimpleFoam -parallel >> logSolve
 
 
     #--------------------------------------------------------------------------
 else
 
     #--------------------------------------------------------------------------
-    echo -en "   - Can not start simulation, '${RED}pimpleDyMFoam$NC'"
+    echo -en "   - Can not start simulation, '${RED}pimpleFoam$NC'"
     echo -e " not available"
 
 

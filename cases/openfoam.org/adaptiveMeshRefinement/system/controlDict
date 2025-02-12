@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  5.x                                   |
+|  \\    /   O peration     | Version:  6.x                                   |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -57,13 +57,9 @@ functions
         libs            ( "libsolverFunctionObjects.so" );
         type            scalarTransport;
         field           S;
-        D               0;
         schemesField    S;
-        nCorr           0;
         resetOnStartup  false;
     }
-
-    #includeFunc residuals
 }
 
 // ************************************************************************* //
