@@ -1,0 +1,101 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    "rho.*"
+    {
+        solver          PCG;
+        preconditioner  FDIC;
+        tolerance       0;
+        relTol          0;
+    }
+
+    p_rgh
+    {
+        /*solver          PCG;
+        preconditioner  FDIC;
+        */
+        solver          GAMG;
+        smoother  FDIC;
+        tolerance       1e-8;
+        relTol          0.01;
+    }
+
+    p_rghFinal
+    {
+        $p_rgh;
+        relTol          0;
+    }
+
+    "(U|h|e|k|epsilon|R)"
+    {
+        solver          PBiCGStab;
+        preconditioner  DILU;
+        tolerance       1e-10;
+        relTol          0.1;
+    }
+
+    "(U|h|e|k|epsilon|R)Final"
+    {
+        $U;
+        relTol          0;
+    }
+}
+
+PIMPLE
+{
+    momentumPredictor false;
+    nOuterCorrectors 20;
+    nCorrectors     2;
+    consistent      true;
+    nNonOrthogonalCorrectors 0;
+
+    residualControl
+    {
+        p_rgh
+        {
+            tolerance 1e-4;
+            relTol 0;
+        }
+    }
+}
+
+relaxationFactors
+{
+    equations
+    {
+        U       0.7;
+        UFinal  1;
+        h       0.8;
+        hFinal  1;
+        k       0.8;
+        kFinal  1;
+        epsilon 0.8;
+        epsilonFinal 1;
+    }
+
+    fields
+    {
+        p_rgh   0.7;
+        p_rghFinal 1;
+    }
+}
+
+
+
+// ************************************************************************* //

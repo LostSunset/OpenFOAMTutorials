@@ -1,0 +1,104 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     pimpleDyMFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         30.5;
+
+deltaT          1e-05;
+
+writeControl    adjustableRunTime;
+
+writeInterval   0.005;
+
+purgeWrite      0;
+
+writeFormat     binary;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+adjustTimeStep  yes;
+
+maxCo           0.8;
+
+maxDeltaT       0.001;
+
+libs
+(
+    "libsolverFunctionObjects.so"
+);
+
+functions
+{
+    S
+    {
+        type            scalarTransport;
+        writeInterval   outputTime;
+        active          false;
+        field           S;
+        schemesField    S;
+        autoSchemes     false;
+        nCorr           0;
+        resetOnStartUp  false;
+
+        fvOptions
+        {
+            source
+            {
+                type            scalarSemiImplicitSource;
+                active          true;
+
+                scalarSemiImplicitSourceCoeffs
+                {
+                    selectionMode   points;
+                    points
+                    4( 
+                        (-0.6  0.15 0.0025)
+                        (-0.6  0.13 0.0025)
+
+                        (-0.6 -0.21 0.0025)
+                        (-0.6 -0.23 0.0025)
+                    );
+
+                    volumeMode      specific;
+                    injectionRateSuSp
+                    {
+                        S (2 0);
+                    }
+                }
+            }
+        };
+    }
+
+    #includeFunc residuals
+}
+
+// ************************************************************************* //

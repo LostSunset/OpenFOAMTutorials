@@ -1,0 +1,80 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      setFieldsDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+defaultFieldValues
+(
+    volScalarFieldValue alpha.water 0
+    volVectorFieldValue U (0 2.5 0)
+);
+
+regions
+(
+    cylinderToCell
+    {
+        p1  (0.005 0.02 0);
+        p2  (0.005 0.02 1);
+        radius 0.0006;
+
+        fieldValues
+        (
+            volScalarFieldValue alpha.water 1
+            volVectorFieldValue U (0 0 0)
+        );
+    }
+
+    cylinderToCell
+    {
+        p1  (0.015 0.037 0);
+        p2  (0.015 0.037 1);
+        radius 0.001;
+
+        fieldValues
+        (
+            volScalarFieldValue alpha.water 1
+            volVectorFieldValue U (0 0 0)
+        );
+    }
+
+    cylinderToCell
+    {
+        p1  (0.022 0.015 0);
+        p2  (0.022 0.015 1);
+        radius 0.0003;
+
+        fieldValues
+        (
+            volScalarFieldValue alpha.water 1
+            volVectorFieldValue U (0 0 0)
+        );
+    }
+
+    cylinderToCell
+    {
+        p1  (0.032 0.03 0);
+        p2  (0.032 0.03 1);
+        radius 0.002;
+
+        fieldValues
+        (
+            volScalarFieldValue alpha.water 1
+            volVectorFieldValue U (0 0 0)
+        );
+    }
+);
+
+
+// ************************************************************************* //
