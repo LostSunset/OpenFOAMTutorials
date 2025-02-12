@@ -22,7 +22,7 @@ dprepro $1 0/p.dakota 0/p
 # Run simulation with new parameter set
 # ------------------------------------------------------------------------------
 
-    
+
     # Get pressure drop dp
     #---------------------------------------------------------------------------
     dp=`head -43 0/p | tail -1`
@@ -60,8 +60,8 @@ dprepro $1 0/p.dakota 0/p
     # Get flux  (average of inlet / outlet would be better here)
     #---------------------------------------------------------------------------
     >&2 echo "   |--> Calc flux through outlet"
-    flux1=`patchIntegrate phi outlet -latestTime \
-        | tail -4 | head -1 | cut -d'=' -f2`
+    flux1=`postProcess -func 'patchIntegrate(name=outlet,phi)' \
+        | tail -5 | head -1 | cut -d'=' -f2`
 
 
     # Remove time directorys (reg expression would be nicer)
@@ -84,8 +84,8 @@ dprepro $1 0/p.dakota 0/p
     # Get flux  (average of inlet / outlet would be better here)
     #---------------------------------------------------------------------------
     >&2 echo "   |--> Calc flux through outlet"
-    flux2=`patchIntegrate phi outlet -latestTime \
-        | tail -4 | head -1 | cut -d'=' -f2`
+    flux2=`postProcess -func 'patchIntegrate(name=outlet,phi)' \
+        | tail -5 | head -1 | cut -d'=' -f2`
 
 
     # Remove time directorys (reg expression would be nicer)
@@ -114,7 +114,7 @@ dprepro $1 0/p.dakota 0/p
     >&2 echo "   |"
     echo -e "$dp\t$ratio\t$funct" >> analyseData.dat
     echo $funct > .dakotaInput.dak
-    
+
 
     # Increase the loop number and store in dummy file
     #--------------------------------------------------------------------------
@@ -123,7 +123,7 @@ dprepro $1 0/p.dakota 0/p
 
 # Generate ouput file for DAKOTA's algorithm
 #------------------------------------------------------------------------------
-cp .dakotaInput.dak $2 
+cp .dakotaInput.dak $2
 
 sleep 0.1
 

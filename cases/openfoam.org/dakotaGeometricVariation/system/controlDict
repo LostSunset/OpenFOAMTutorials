@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  4.x                                   |
+|  \\    /   O peration     | Version:  5.x                                   |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -64,19 +64,22 @@ functions
         resetOnStartUp  false;
     }
 
-    //- Flux weighted average at outlet surface
+    //- Flux weighted average temperature at outlet surface
     Taverage
     {
-        type            surfaceRegion;
+        type            surfaceFieldValue;
+
+        log             true;
         writeControl    writeTime;
-        log             no;
-        writeFields     no;
+        writeFields     true;
+
         regionType      patch;
         name            outlet;
-        operation       weightedAverage;
+        operation       weightedAreaAverage;
         weightField     phi;
+        surfaceFormat   off;
 
-        fields          
+        fields
         (
             T
         );

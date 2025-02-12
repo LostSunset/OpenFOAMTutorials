@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  4.x                                   |
+|  \\    /   O peration     | Version:  5.x                                   |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -10,25 +10,32 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    location    "constant";
-    object      dynamicMeshDict;
+    object      decomposeParDict;
 }
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dynamicFvMesh   solidBodyMotionFvMesh;
+numberOfSubdomains 3;
 
-motionSolverLibs ( "libfvMotionSolvers.so" );
+method          hierarchical;
+// method          ptscotch;
 
-solidBodyMotionFvMeshCoeffs
+simpleCoeffs
 {
-    cellZone        movingZone;
+    n               (4 1 1);
+    delta           0.001;
+}
 
-    solidBodyMotionFunction  oscillatingLinearMotion;
-    oscillatingLinearMotionCoeffs 
-    {
-        amplitude     (0 0.1 0);
-        omega         6.14; 
-    }
+hierarchicalCoeffs
+{
+    n               (3 1 1);
+    delta           0.001;
+    order           xyz;
+}
+
+manualCoeffs
+{
+    dataFile        "cellDecomposition";
 }
 
 

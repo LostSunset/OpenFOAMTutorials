@@ -1,0 +1,90 @@
+#!/bin/bash
+#
+#----------------------------------------------#
+# Contributor: Tobias Holzmann                 #
+# Updated on:  15 September 2018               #
+#----------------------------------------------#
+# Location:    www.Holzmann-cfd.de             #
+# Email:       Tobias.Holzmann@Holzmann-cfd.de #
+#----------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+# Preamble with the information about the tutorial
+echo -en "
+-------------------------------------------------------------------------------
+${GRAY}Tutorial by Tobias Holzmann${NC} :: Generated during October 2016
+${GRAY}Build for OpenFOAM version${NC}  :: OpenFOAM-5.x
+${GRAY}Tested on system${NC}            :: Ubuntu 18.04.1
+${GRAY}The case was updated on${NC}     :: 15 September 2018
+-------------------------------------------------------------------------------
+
+
+${GREEN}Topic: DAKOTA coupling with OpenFOAM (mixing problem)${NC}
+-------------------------------------------------------------------------------
+${NC}++ Latin Hypercube Sampling (LHS) of three parameters:
+++ change inlet size
+++ change baffle angel of baffle 1
+++ change baffle angel of baffle 2
+
+Thanks to ${ORANGE}Harald Unger ${NC}for the idea of this kind of tutorial.
+
+In the following dakota coupling case, we mix a cold and hot stream that has to
+be uniform distributed at the outlet and should reach a temperature of 320K.
+The parameter of the average temperature is set in dakota.sh. During the study
+we will analyze a set of parameters that are choosen by the LHS method. After
+that we could apply some optimization loop, but this is not the specification
+of this tutorial. If you want to do this kind of simulation (optimization),
+you should check out the official dokumentation of DAKOTA.
+
+${GREEN}++ NOTE:${NC}
+   This tutorial is not about DAKOTA because the settings and solver that I am
+   using are not the best one. The tutorial should demonstrate how we can
+   couple the two software packages. Some hints about the scripts and files
+   can be read in the README file.
+
+${ORANGE}++ NOTE about the case:${NC}
+   The case is high instationary, if the baffles block the flow. We will get
+   vortex shedding, therefore the SIMPLE algorithm will not converge in
+   some cases based on the instationarity.
+-------------------------------------------------------------------------------
+\n
+"
+
+sleep 3
+
+
+#------------------------------------------------------------------------------
+# Check the OpenFOAM version
+echo -e "   - Check OpenFOAM version. We need $foamVersion"
+userFoamVersion=`echo "$WM_PROJECT-$WM_PROJECT_VERSION"`
+
+if [ "$userFoamVersion" == "$foamVersion" ]
+then
+    echo -e  "   - ${GREEN}$foamVersion found...${NC}"
+
+else
+    echo -e  "   - ${RED}You are not using the correct OpenFOAM version"
+    echo -en "     Your version is $userFoamVersion and we need ${GREEN}"
+    echo -e  "$foamVersion${NC}\n"
+
+    while true
+    do
+        echo -en  "   - Proceed with your OpenFOAM version (y/n): "
+        read proceed
+
+        if [ "$proceed" == "y" ]
+        then
+            break
+
+        elif [ "$proceed" == "n" ]
+        then
+            echo -e "\n\n"
+            exit
+
+        fi
+    done
+fi
+
+
+#------------------------------------------------------------------------------

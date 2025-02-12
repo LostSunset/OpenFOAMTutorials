@@ -1,16 +1,18 @@
 #!/bin/bash
 #
-#----------------------------------------------#
-# Contributor: Tobias Holzmann                 #
-# Last Change: October 2016                    #
-# Topic:       DAKOTA coupling with OpenFOAM   #
-# Email:       Tobias.Holzmann@Holzmann-cfd.de #
-# Location:    www.Holzmann-cfd.de             #
-#----------------------------------------------#
+#-------------------------------------------------#
+# Contributor: Tobias Holzmann                    #
+# Updated on: 21 October 2017                     #
+#-------------------------------------------------#
+# Topic:       DAKOTA coupling with OpenFOAM      #
+# OpenFOAM:    5.x                                #
+#-------------------------------------------------#
+# Location:    www.Holzmann-cfd.de                #
+# Email:       Tobias.Holzmann@Holzmann-cfd.de    #
+#-------------------------------------------------#
 
 
 # OpenFOAM script
-#
 #------------------------------------------------------------------------------
 echo -e "\n
 Start meshing
@@ -50,9 +52,9 @@ createPatch -overwrite  >> logMeshing
 
 
 #------------------------------------------------------------------------------
-echo -e "   - Copy 0.org to 0"
+echo -e "   - Copy 0.orig to 0"
 rm -r 0
-cp -r 0.org 0
+cp -r 0.orig 0
 
 
 #------------------------------------------------------------------------------

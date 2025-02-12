@@ -5,7 +5,7 @@
 # Updated on:  15 September 2018                  #
 #-------------------------------------------------#
 # Topic:       Adaptive mesh refinement           #
-# OpenFOAM:    4.x                                #
+# OpenFOAM:    5.x                                #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.de            #
 # Email:       Tobias.Holzmann@Holzmann-cfd.de    #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-4.x"
+foamVersion="OpenFOAM-5.x"
 
 
 #------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ decomposePar >> logFile
 
 
 #------------------------------------------------------------------------------
-echo -e "   - Castallate and snap" 
+echo -e "   - Castallate and snap"
 mpirun -np 2 snappyHexMesh -overwrite -parallel>> logFile
 
 
@@ -76,7 +76,7 @@ sed '21s/.*/addLayers true;/' sys*/snappyHexMeshDict -i
 
 
 #------------------------------------------------------------------------------
-echo -e "   - Add layerer with snappyHexMesh (Coverage: 95,4%)" 
+echo -e "   - Add layerer with snappyHexMesh (Coverage: 95,4%)"
 mpirun -np 2 snappyHexMesh -overwrite -parallel>> logFile
 
 
@@ -101,7 +101,7 @@ createPatch -overwrite >> logFile
 
 #------------------------------------------------------------------------------
 echo -e "   - Scaling"
-transformPoints -scale "(1e-3 1e-3 1e-3)" >> logFile 
+transformPoints -scale "(1e-3 1e-3 1e-3)" >> logFile
 surfaceTransformPoints -scale "(0.001 0.001 0.001)" con*/tri*/regionSTL.stl \
     con*/tri*/regionSTL.stl >> logFile
 surfaceTransformPoints -scale "(0.001 0.001 0.001)" con*/tri*/layer.stl \
@@ -109,8 +109,8 @@ surfaceTransformPoints -scale "(0.001 0.001 0.001)" con*/tri*/layer.stl \
 
 
 #------------------------------------------------------------------------------
-echo -en "   - check the mesh: "
-checkMesh -constant | grep 'Mesh.*\.$' 
+echo -e "   - check the mesh (get errors): "
+checkMesh -constant | egrep '\*[A-Z].*'
 
 
 #------------------------------------------------------------------------------

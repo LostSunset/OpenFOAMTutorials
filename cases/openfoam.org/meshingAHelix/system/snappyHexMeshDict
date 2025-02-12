@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  4.x                                   |
+|  \\    /   O peration     | Version:  5.x                                   |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -166,7 +166,7 @@ castellatedMeshControls
     // Whether any faceZones (as specified in the refinementSurfaces)
     // are only on the boundary of corresponding cellZones or also allow
     // free-standing zone faces. Not used if there are no faceZones.
-    allowFreeStandingZoneFaces true;
+    allowFreeStandingZoneFaces false;
 }
 
 
@@ -181,7 +181,7 @@ snapControls
     //- Relative distance for points to be attracted by surface feature point
     //  or edge. True distance is this factor times local
     //  maximum edge length.
-    tolerance 1.1;
+    tolerance 1;
 
     //- Number of mesh displacement relaxation iterations.
     nSolveIter 200;
@@ -219,14 +219,14 @@ addLayersControls
         layer 
         {
             nSurfaceLayers 2;
-            finalLayerThickness 0.22;
+            finalLayerThickness 0.25;
             expansionRatio 1.2;
         }
 
     }
 
     // Expansion factor for layer mesh
-    expansionRatio 1.2;
+    expansionRatio 1.3;
 
     // Wanted thickness of final added cell layer. If multiple layers
     // is the thickness of the layer furthest away from the wall.

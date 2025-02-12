@@ -14,9 +14,10 @@
 echo -en "
 -------------------------------------------------------------------------------
 ${GRAY}Tutorial by Tobias Holzmann${NC} :: Generated during November 2014
-${GRAY}Build for OpenFOAM version${NC}  :: OpenFOAM-4.x
+${GRAY}Build for OpenFOAM version${NC}  :: OpenFOAM-5.x
 ${GRAY}Tested on system${NC}            :: Ubuntu 18.04.1
 ${GRAY}The case was updated on${NC}     :: 15 September 2018
+-------------------------------------------------------------------------------
 
 
 ${GREEN}Topic: Using featureEdges to refine the edges${NC}

@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  4.x                                   |
+|  \\    /   O peration     | Version:  5.x                                   |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -10,42 +10,20 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    location    "system";
-    object      fvSchemes;
+    location    "constant";
+    object      RASProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-ddtSchemes
-{
-    default         Euler;
-}
+simulationType RAS;
 
-gradSchemes
+RAS
 {
-    default         none;
-    grad(T)         Gauss linear;
-}
+    RASModel    kEpsilon;
 
-divSchemes
-{
-    default         none;
-    div(meshPhi,T)  Gauss upwind;
-}
+    turbulence      on;
 
-laplacianSchemes
-{
-    default         none;
-    laplacian(DT,T) Gauss linear limited corrected 0.33;
-}
-
-interpolationSchemes
-{
-    default         linear;
-}
-
-snGradSchemes
-{
-    default         limited corrected 0.33;
+    printCoeffs     on;
 }
 
 

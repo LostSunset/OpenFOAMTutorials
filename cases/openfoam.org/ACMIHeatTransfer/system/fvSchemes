@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  4.x                                   |
+|  \\    /   O peration     | Version:  5.x                                   |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -10,15 +10,43 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    object      meshQualityDict;
+    location    "system";
+    object      fvSchemes;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-// Include defaults parameters from master dictionary
-#include "$WM_PROJECT_DIR/etc/caseDicts/meshQualityDict"
+ddtSchemes
+{
+    default         Euler;
+}
 
-//- minFaceWeight (0 -> 0.5)
-minFaceWeight 0.02;
-maxNonOrtho 180;
+gradSchemes
+{
+    default         none;
+    grad(T)         Gauss linear;
+}
+
+divSchemes
+{
+    default         none;
+    div(meshPhi,T)  Gauss upwind;
+}
+
+laplacianSchemes
+{
+    default         none;
+    laplacian(DT,T) Gauss linear limited corrected 0.33;
+}
+
+interpolationSchemes
+{
+    default         linear;
+}
+
+snGradSchemes
+{
+    default         limited corrected 0.33;
+}
+
 
 // ************************************************************************* //

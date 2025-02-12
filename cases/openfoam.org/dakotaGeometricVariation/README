@@ -10,15 +10,15 @@
 #
 # Thanks to Harald Unger for mentioning the idea of the case
 #
-# ** run 
+# ** run
 #-----------------------------------------------------------------------------
 # The run script is just outputing some information, cleans the case
 # and checkes if the swak4Foam and dakota environment is available. If we have
-# both, the script starts dakota and uses the dakota input file 
-#  
+# both, the script starts dakota and uses the dakota input file
+#
 #   ++ system/dakotaDict
 #
-# Here, we make the settings for DAKOTA and tell it, which script the toolbox 
+# Here, we make the settings for DAKOTA and tell it, which script the toolbox
 # should call for the interface:
 #
 #   ++ dakota.sh
@@ -29,23 +29,23 @@
 # The clean script just cleans the tutorial and deletes all non needed files
 #
 #
-# ** createMesh 
+# ** createMesh
 #-----------------------------------------------------------------------------
-# This script is a basic script that you will find in all my tutorials. It 
+# This script is a basic script that you will find in all my tutorials. It
 # simply creates the mesh with the given commands
 #
 #
-# ** dakota.sh 
+# ** dakota.sh
 #-----------------------------------------------------------------------------
 # This is the main script that is excecuted by dakota (see system/dakotaDict)
 # We are using the command - dprepro - for manipulating our files and use it
 # as interface.
 #
 # Brief description of the script:
-# At the beginning we set just a variable. After that we 
+# At the beginning we set just a variable. After that we
 # manipulate the file
-# 
-#   ++ system/dakotaParameters.orig 
+#
+#   ++ system/dakotaParameters.orig
 #
 # After that, we have the new quantities in the corresponding files and we
 # we make some simple manipulation for displaing the stuff. Then, we
@@ -55,15 +55,15 @@
 #   ++ change the rotation of baffle 2
 #   ++ change the length of the inlet of the cold stream
 #
-# If this is done, we create the new mesh by executing 
+# If this is done, we create the new mesh by executing
 #
 #   ++ createMesh
 #
 #  and run the simulation hence, it is converged or we reach the number of
 #  iterations we set in the controlDict for OpenFOAM.
-#  Then, we need to extract the information of interest. In our case the 
+#  Then, we need to extract the information of interest. In our case the
 #  massflux averaged temperature distribution and the min and max values of
-#  the temperature with respekt to the outlet are used. A homogeneous T field 
+#  the temperature with respekt to the outlet are used. A homogeneous T field
 #  profile yields, that Tmin is equal to Tmax. Hence, we build a function
 #  func2 which should be minimized. In addition we build a second function
 #  that represents the different of the averaged field to the field we want
@@ -91,5 +91,6 @@
 #   The simulation (based on the fact that it is a randomized multi-dimension
 #   study based on SAMPLING with LHS) could be also run in parallel for speed
 #   up the single calculations.
+#
 #
 #-----------------------------------------------------------------------------

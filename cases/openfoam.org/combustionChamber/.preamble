@@ -14,17 +14,13 @@
 echo -en "
 -------------------------------------------------------------------------------
 ${GRAY}Tutorial by Tobias Holzmann${NC} :: Generated during October 2016  
-${GRAY}Build for OpenFOAM version${NC}  :: OpenFOAM-4.x
+${GRAY}Build for OpenFOAM version${NC}  :: OpenFOAM-5.x
 ${GRAY}Tested on system${NC}            :: Ubuntu 18.04.1
 ${GRAY}The case was updated on${NC}     :: 15 September 2018
-
-
-${GREEN}Topic: Convert a region fluent mesh to a region foam mesh for CHT${NC}
 -------------------------------------------------------------------------------
 
-Thanks to ${GREEN}Ahmed Elsayed${NC} for the idea of this kind of tutorial. 
 
-
+${GREEN}Topic: Building a complex combustion chamber${NC}
 -------------------------------------------------------------------------------
 "
 
@@ -40,7 +36,7 @@ then
 
 else
     echo -e  "   - ${RED}You are not using the correct OpenFOAM version"
-    echo -en "    Your version is $userFoamVersion and we need ${GREEN}"
+    echo -en "     Your version is $userFoamVersion and we need ${GREEN}"
     echo -e  "$foamVersion${NC}\n"
 
     while true

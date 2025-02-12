@@ -1,12 +1,4 @@
 #!/bin/bash
-#------------------------------------------------------------------------------#
-#                                                                              #
-#   A   utomatic    |  Build by Tobias Holzmann                                #
-#   O   ptimization |  Version 3.1.0                                           #
-#   P   rocess      |                                                          #
-#   C   chain       |                                                          #
-#                                                                              #
-#------------------------------------------------------------------------------#
 #
 # Description
 #   Run the dakota tool and run the process chain
@@ -23,7 +15,7 @@ dprepro $1 system/dakotaParameter.orig system/dakotaParameter
 # Run simulation with new parameter set
 # ------------------------------------------------------------------------------
 
-    
+
     # Get angle1, angle2, length of inlet + loop number
     #---------------------------------------------------------------------------
     angle1=`head -5 system/dakotaParameter | tail -1 | cut -d'=' -f2`
@@ -31,7 +23,7 @@ dprepro $1 system/dakotaParameter.orig system/dakotaParameter
     length=`head -7 system/dakotaParameter | tail -1 | cut -d'=' -f2`
     loopNumber=`cat .optimizationLoop`
 
-    
+
     # Transform the scientific notation into a readable format for | bc
     # Here we remove e or E with *10^
     #---------------------------------------------------------------------------
@@ -39,7 +31,7 @@ dprepro $1 system/dakotaParameter.orig system/dakotaParameter
     angle2=`echo $angle2 | sed -e 's/[eE]+*/\*10\^/'`
     length=`echo $length | sed -e 's/[eE]+*/\*10\^/'`
 
-    
+
     # Optical stuff
     #---------------------------------------------------------------------------
     angle1=`echo "scale=4; $angle1" | bc`
@@ -56,13 +48,13 @@ dprepro $1 system/dakotaParameter.orig system/dakotaParameter
     >&2 echo -e "   |--> baffle angle2 = $angle2 [degree]"
     >&2 echo -e "   |--> length of cold inlet = $length [m]"
 
-    
+
     # Set the new angle parameters for the baffles
     #---------------------------------------------------------------------------
     cp system/rotateBafflesDict system/rotateBaffles
     sed "s/angle1/$angle1/" system/rotateBaffles -i
     sed "s/angle2/$angle2/" system/rotateBaffles -i
-    
+
 
     # Calculate the new coordinates for the inlet
     #---------------------------------------------------------------------------
@@ -80,7 +72,7 @@ dprepro $1 system/dakotaParameter.orig system/dakotaParameter
     logFolder_="Log/Optimization"$loopNumber
     mkdir -p $logFolder_
 
-    
+
     # Mesh the case with new parameters
     #---------------------------------------------------------------------------
     >&2 echo "   |--> Start new meshing"
@@ -103,7 +95,7 @@ dprepro $1 system/dakotaParameter.orig system/dakotaParameter
 
     # Mass flow weighted mean temperature
     #---------------------------------------------------------------------------
-    cat postProcessing/Taverage/0/surfaceRegion.dat | tail -1 | xargs | \
+    cat postProcessing/Taverage/0/surfaceFieldValue.dat | tail -1 | xargs | \
         cut -d' ' -f2 > Taverage
 
     Tmax=`cat Tmin | grep  "T = " | cut -d'=' -f2 | head -1`
@@ -117,7 +109,7 @@ dprepro $1 system/dakotaParameter.orig system/dakotaParameter
 
     # Prepare results (this may not work in all environments)
     # What I do is simply to copy the mesh and the results into a new time
-    # folder that we can check out the simple calculations 
+    # folder that we can check out the simple calculations
     #--------------------------------------------------------------------------
     mkdir results/$loopNumber
     cp -r constant/polyMesh results/$loopNumber
@@ -131,7 +123,7 @@ dprepro $1 system/dakotaParameter.orig system/dakotaParameter
 
 
     # Resonse function:
-    #   1:  the mean temperature should be achieved 
+    #   1:  the mean temperature should be achieved
     #   2:  the temperature distribution should be as good as possible
     # Both could be minimized (not done here)
     #---------------------------------------------------------------------------
@@ -158,16 +150,16 @@ dprepro $1 system/dakotaParameter.orig system/dakotaParameter
     >&2 echo "   |"
     #echo -e "$angle1\t$angle2\t$length\t$funct1\t$funct2" >> analyseData.dat
     echo -e "$funct1\t$funct2" > .dakotaInput.dak
-    
+
 
     # Increase the loop number and store in dummy file
     #--------------------------------------------------------------------------
     echo $((loopNumber+1)) > .optimizationLoop
-    
+
 
 # Generate ouput file for DAKOTA's algorithm (Object function)
 #------------------------------------------------------------------------------
-cp .dakotaInput.dak $2 
+cp .dakotaInput.dak $2
 
 sleep 2.1
 
