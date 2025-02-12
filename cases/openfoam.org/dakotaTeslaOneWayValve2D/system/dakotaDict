@@ -1,0 +1,43 @@
+# Dakota Input File
+#
+# Automatic Process Chain Simulation
+#-----------------------------------------------------------------------------
+
+
+environment
+    tabular_graphics_data
+        tabular_graphics_file = 'dakotaData.dat'
+
+method
+    max_iterations = 100
+    convergence_tolerance = 1e-3
+    conmin_frcg
+
+model
+    single
+
+variables
+    continuous_design = 1
+        initial_point	5	
+        lower_bounds    0          
+        upper_bounds    5000      
+        descriptors     'dp' 
+
+interface
+    fork
+        analysis_driver = 'dakota.sh'
+        parameters_file = 'params.in'
+        results_file    = 'results.out'
+    aprepro
+
+    deactivate active_set_vector
+
+responses
+    objective_functions = 1
+    numerical_gradients
+        method_source dakota
+        interval_type central 
+       fd_gradient_step_size = 0.1
+    no_hessians
+
+#-----------------------------------------------------------------------------

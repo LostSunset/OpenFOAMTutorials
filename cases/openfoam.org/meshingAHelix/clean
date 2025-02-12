@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+#----------------------------------------------#
+# Contributor: Tobias Holzmann                 #
+# Last Change: April 2015                      #
+# Topic:       Meltingpot meshing              #
+# Email:       Tobias.Holzmann@Holzmann-cfd.de #
+#----------------------------------------------#
+
+
+#-------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+
+
+#-------------------------------------------------------------------------------
+foamCleanTutorials
+rm -rf log* c*/extend* c*/tri*/*.eMesh c*/poly* 0 proces*
+rm -rf con*/tri*/regionSTL.stl con*/tri*/layer.stl
+
+
+#-------------------------------------------------------------------------------

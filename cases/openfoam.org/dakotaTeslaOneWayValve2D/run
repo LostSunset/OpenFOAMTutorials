@@ -1,0 +1,123 @@
+#!/bin/bash
+#
+#----------------------------------------------#
+# Contributor: Tobias Holzmann                 #
+# Updated on:  15 September 2018                  #
+# Topic:       DAKOTA coupling with OpenFOAM   #
+# Email:       Tobias.Holzmann@Holzmann-cfd.de #
+# OpenFOAM:    4.x                                #
+
+# Website:     https://Holzmann-cfd.de            #
+#------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+source clean
+
+dakotaInputFile="system/dakotaDict"
+dakotaOutputFile="dakotaLog"
+optimizationLogFile="optimizationLog"
+
+
+#------------------------------------------------------------------------------
+echo -e "
+-------------------------------------------------------------------------------
+Tutorial by Tobias Holzmann
+Generated April 2016    
+OpenFOAM-2.3.1
+
+
+Topic: DAKOTA coupling with OpenFOAM
+-------------------------------------------------------------------------------
+>>> The question: What pressure drop we need to get a 3 times smaller
+    reverse flow through the valve compared to the flow direction?\n"
+
+sleep 5
+
+
+#------------------------------------------------------------------------------
+if [ -f cad/backgroundMesh.unv ];
+then
+    echo "   - Background mesh exist, proceed..."
+else
+    echo "   - No background mesh exist, please excecute 'salome -t cad/*.py"
+    echo ""
+    exit
+fi
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create background mesh"
+ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Extract feature edges" 
+surfaceFeatureExtract >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Meshing with snappyHexMesh (~ 3 minutes)"
+snappyHexMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Extrude one patch to make a 2D mesh"
+extrudeMesh  >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Remove not necessary boundarys" 
+createPatch -overwrite  >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Renumber the mesh"
+renumberMesh -constant -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Copy 0.org to 0"
+rm -r 0
+cp -r 0.org 0
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Lets start doing DAKOTA the work for us"
+echo -e "     ++ Input file for dakota: $dakotaInputFile"
+echo -e "     ++ Output file for dakota: $dakotaOutputFile"
+echo -e "     ++ Log file: $optimizationLogFile"
+
+#### DAKOTA ####
+if [ `which dakota | grep 'dakota' -c` == 1 ];
+then
+    echo "1" > .optimizationLoop
+    dakota -i $dakotaInputFile -o $dakotaOutputFile > $optimizationLogFile &
+    echo -e "   - DAKOTA is running ...\n"
+    wait
+else
+    echo "    - No dakota application available, skip optimisation"
+fi
+
+best=`grep 'Best data' dakotaLog | cut -d' ' -f8`
+echo -e "   - Best result got with optimization $best"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Simulation successfully ended\n\n"
+
+
+#------------------------------------------------------------------------------

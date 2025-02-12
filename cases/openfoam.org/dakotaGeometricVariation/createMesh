@@ -1,0 +1,67 @@
+#!/bin/bash
+#
+#----------------------------------------------#
+# Contributor: Tobias Holzmann                 #
+# Last Change: October 2016                    #
+# Topic:       DAKOTA coupling with OpenFOAM   #
+# Email:       Tobias.Holzmann@Holzmann-cfd.de #
+# Location:    www.Holzmann-cfd.de             #
+#----------------------------------------------#
+
+
+# OpenFOAM script
+#
+#------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+rm -rf constant/polyMesh
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create mesh"
+blockMesh > logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Rotate baffles"
+source system/rotateBaffles >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Adding baffles to the mesh"
+snappyHexMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Flatten mesh"
+flattenMesh >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Extrude one patch to make a 2D mesh again"
+extrudeMesh  >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Remove not necessary boundarys" 
+createPatch -overwrite  >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Copy 0.org to 0"
+rm -r 0
+cp -r 0.org 0
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Renumber the mesh"
+renumberMesh -constant -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n
+"

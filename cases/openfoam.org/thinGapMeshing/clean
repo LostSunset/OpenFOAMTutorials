@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+#----------------------------------------------#
+# Contributor: Tobias Holzmann                 #
+# Last Change: March 2016                      #
+# Topic:                                       #
+# Email:       Tobias.Holzmann@Holzmann-cfd.de #
+#----------------------------------------------#
+
+
+#-------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+
+
+#-------------------------------------------------------------------------------
+foamCleanTutorials
+rm -rf constant/triSurface/regionSTL.stl
+rm -rf constant/triSurface/specialGapRefinement.stl
+rm -rf 0 log*
+
+
+#-------------------------------------------------------------------------------
