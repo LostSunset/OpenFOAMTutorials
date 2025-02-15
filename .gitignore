@@ -1,0 +1,5 @@
+# Ignore all geoemtric data based on the large sizes and lack of lfs storage/traffic
+*.stl
+*.unv
+*.step
+*.hdf
