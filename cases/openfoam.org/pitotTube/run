@@ -1,0 +1,92 @@
+#!/bin/bash
+#
+#-------------------------------------------------#
+# Contributor: Tobias Holzmann                    #
+# Updated on:  22 April 2020                      #
+#-------------------------------------------------#
+# Topic:       Community Cristmas Competition     #
+# OpenFOAM:    7.x                                #
+#-------------------------------------------------#
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
+#-------------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+foamVersion="OpenFOAM-7.x"
+
+
+#------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+source clean
+source .color
+source .preamble
+
+cd 2D_to50ms
+
+#------------------------------------------------------------------------------
+if [ -f cad/backgroundMesh.unv ];
+then
+    echo "   - Background mesh exist, proceed..."
+else
+    echo "   - No background mesh exist, please create one'"
+    echo ""
+    exit
+fi
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create background mesh"
+ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Change the patch types for front and back"
+createPatch -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Meshing with snappyHexMesh"
+snappyHexMesh -overwrite >> logMeshing
+extrudeMesh >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Copy 0.orig to 0"
+rm -r 0
+cp -r 0.orig 0
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Start simulation"
+echo -e "   - Decompose the case for parallel run"
+decomposePar -force > logSolver
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Start transient calculation (2-3 days to get to 50 m/s)"
+mpirun -np 2 pimpleFoam -parallel >> logSolver
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Simulation ended\n\n"
+echo -e "   - For the others, create a symbolic link for the mesh"
+echo -e "     and decompose the case. Afterwards start pimpleFoam. Enjoy"
+
+
+#------------------------------------------------------------------------------

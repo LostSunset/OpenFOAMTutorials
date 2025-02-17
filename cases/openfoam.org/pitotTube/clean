@@ -1,0 +1,44 @@
+#!/bin/bash
+#
+#----------------------------------------------#
+# Contributor: Tobias Holzmann                 #
+# Last Change: April 2016                      #
+# Topic:                                       #
+# Email:       Tobias.Holzmann@Holzmann-cfd.de #
+#----------------------------------------------#
+
+
+#-------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+
+
+#-------------------------------------------------------------------------------
+cd 2D_to50ms
+foamCleanTutorials
+rm -rf log*
+
+cd ../2D_01
+foamCleanTutorials
+rm -rf log*
+
+cd ../2D_1
+foamCleanTutorials
+rm -rf log*
+
+cd ../2D_67
+foamCleanTutorials
+rm -rf log*
+
+cd ../2D_100
+foamCleanTutorials
+rm -rf log*
+
+cd ../2D_240
+foamCleanTutorials
+rm -rf log*
+
+cd ..
+
+
+#-------------------------------------------------------------------------------

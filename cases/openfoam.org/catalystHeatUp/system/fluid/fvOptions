@@ -1,0 +1,114 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  7.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvOptions;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Porosity modeling for the SCR at position 1
+// Active in cellZone named SCR1
+SCR1
+{
+    // fvOption type
+    type            explicitPorositySource;
+
+    explicitPorositySourceCoeffs
+    {
+        selectionMode   cellZone;
+        cellZone        SCR1;
+        active          yes;
+
+        // FOAM offers different porosity models. Here we use the
+        // Darcy Forchheimer equation. d and f are model parameters
+        // More information on https://Holzmann-cfd.com
+        type            DarcyForchheimer;
+
+        d           (0 0 0);
+        f           (-1000 -1000 140);
+
+        coordinateSystem
+        {
+            type    cartesian;
+            origin  (0 0 0);
+            coordinateRotation
+            {
+                type    axesRotation;
+                e1      (1 0 0);
+                e2      (0 1 0);
+            }
+        }
+    }
+}
+
+// Porosity modeling for the SCR at position 2
+// Active in cellZone named SCR2
+SCR2
+{
+    type            explicitPorositySource;
+
+    explicitPorositySourceCoeffs
+    {
+        selectionMode   cellZone;
+        cellZone        SCR2;
+        active          yes;
+
+        // FOAM offers different porosity models. Here we use the
+        // Darcy Forchheimer equation. d and f are model parameters
+        // More information on https://Holzmann-cfd.com
+        type            DarcyForchheimer;
+
+        d           (0 0 0);
+        f           (-1000 -1000 140);
+
+        coordinateSystem
+        {
+            type    cartesian;
+            origin  (0 0 0);
+            coordinateRotation
+            {
+                type    axesRotation;
+                e1      (1 0 0);
+                e2      (0 1 0);
+            }
+        }
+    }
+}
+
+//- This is an arbitrary name of the object
+//  Has to set in the other region (other region -> SCR1)
+Coupling
+{
+    // All information in system/SCR*/fvOptions
+    type                constantHeatTransfer;
+    nbrRegionName       SCR1;
+    interpolationMethod cellVolumeWeight;
+    nbrModel            Coupling;
+    fields              (h);
+    semiImplicit        false;
+}
+
+
+//- This is an arbitrary name of the object
+//  Has to set in the other region (other region -> SCR2)
+Coupling2
+{
+    // All information in system/SCR*/fvOptions
+    type                constantHeatTransfer;
+    nbrRegionName       SCR2;
+    interpolationMethod cellVolumeWeight;
+    nbrModel            Coupling;
+    fields              (h);
+    semiImplicit        false;
+}
+
+
+// ************************************************************************* //

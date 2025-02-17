@@ -1,0 +1,74 @@
+#!/bin/bash
+#
+#----------------------------------------------#
+# Contributor: Tobias Holzmann                 #
+# Updated on:  22 April 2020                   #
+#----------------------------------------------#
+# Location:    https://Holzmann-cfd.com        #
+# Email:       community@Holzmann-cfd.com      #
+#----------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+# Preamble with the information about the tutorial
+echo -en "
+-------------------------------------------------------------------------------
+${GRAY}Tutorial by Tobias Holzmann${NC} :: Generated during October 2019
+${GRAY}Build for OpenFOAM version${NC}  :: OpenFOAM-7.x
+${GRAY}Tested on system${NC}            :: Ubuntu 19.10
+${GRAY}The case was updated on${NC}     :: 22 April 2020
+-------------------------------------------------------------------------------
+
+
+${GREEN}Topic: Community Christmas Competition 2019 - Pitot Tube${NC}
+-------------------------------------------------------------------------------
+The third Jozsef Nagy's Christmas community competition. The challenge is to
+calculate the pressure differences of the Pitot tube while comparing the results
+with the analytic ones.
+
+There is no constrain except the investigated velocities:
+- 0.1 m/s
+- 1.0 m/s
+- 67 m/s
+- 100 m/s
+- 240 m/s
+
+Everything else is up to the community. A brief summary is published
+in the Publication section at https://Holzmann-cfd.de\n\n
+"
+
+
+#------------------------------------------------------------------------------
+# Check the OpenFOAM version
+echo -e "   - Check OpenFOAM version. We need $foamVersion"
+userFoamVersion=`echo "$WM_PROJECT-$WM_PROJECT_VERSION"`
+
+if [ "$userFoamVersion" == "$foamVersion" ]
+then
+    echo -e  "   - ${GREEN}$foamVersion found...${NC}"
+
+else
+    echo -e  "   - ${ORANGE}You are not using the correct OpenFOAM version"
+    echo -en "     Your version is $userFoamVersion and we need ${GREEN}"
+    echo -e  "$foamVersion${NC}\n"
+
+    while true
+    do
+        echo -en  "   - Proceed with your OpenFOAM version (y/n): "
+        read proceed
+
+        if [ "$proceed" == "y" ]
+        then
+            break
+
+        elif [ "$proceed" == "n" ]
+        then
+            echo -e "\n\n"
+            exit
+
+        fi
+    done
+fi
+
+
+#------------------------------------------------------------------------------

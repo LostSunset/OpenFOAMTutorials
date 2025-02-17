@@ -1,0 +1,146 @@
+#!/bin/bash
+#
+#-------------------------------------------------#
+# Contributor: Tobias Holzmann                    #
+# Updated on:  22 April 2020                      #
+#-------------------------------------------------#
+# Topic:       Catalyst Heat-Up Case              #
+# OpenFOAM:    7.x                                #
+#-------------------------------------------------#
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
+#-------------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+foamVersion="OpenFOAM-7.x"
+
+
+#------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+source clean
+source .color
+source .preamble
+
+
+#------------------------------------------------------------------------------
+if [ -f cad/backgroundMesh.unv ];
+then
+    echo "  - Background mesh exist, proceed..."
+else
+    echo "  - No background mesh exist, please build a mesh"
+    echo ""
+    exit
+fi
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "  - Create background mesh"
+ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "  - Meshing the SCR's using snappyHexMesh (generate cellZones)"
+snappyHexMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "  - Split mesh into the single regions"
+splitMeshRegions -cellZones -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "  - Remove not needed meshes and dictionaries"
+rm -rf constant/polyMesh constant/region2 constant/region3 0 system/region* \
+    constant/region1
+
+
+#------------------------------------------------------------------------------
+echo -e "  - Create back ground mesh for the fluid"
+ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "  - Meshing the fluid using snappyHexMesh (+generate cellZones)"
+snappyHexMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "  - Copy the fluid mesh into the correct folder"
+mv constant/polyMesh constant/fluid
+
+
+#------------------------------------------------------------------------------
+echo -e "  - Combine and rename the boundaries"
+createPatch -region SCR1 -overwrite > logSolve
+createPatch -region SCR2 -overwrite >> logSolve
+
+
+#------------------------------------------------------------------------------
+echo -e "  - Set the boundary type"
+changeDictionary -region SCR1 >> logSolve
+changeDictionary -region SCR2 >> logSolve
+changeDictionary -region fluid >> logSolve
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "  - Copy 0.orig to 0"
+rm -rf 0
+cp -r 0.orig 0
+
+
+#------------------------------------------------------------------------------
+if [ `which chtMultiRegionFoam` ]
+then
+
+    #--------------------------------------------------------------------------
+    echo -e "  - Get core numbers"
+    nC=`cat system/decomposeParDict | grep "numberOf" | cut -d' ' -f2 | \
+        cut -d';' -f1`
+
+    #--------------------------------------------------------------------------
+    echo -e "  - Decompose the stuff"
+    decomposePar -allRegions >> logSolve
+
+
+    #--------------------------------------------------------------------------
+    echo -e "  - Renumber the mesh"
+    mpirun -np $nC renumberMesh -region SCR1 -overwrite -parallel >> logSolve
+    mpirun -np $nC renumberMesh -region SCR2 -overwrite -parallel >> logSolve
+    mpirun -np $nC renumberMesh -region fluid -overwrite -parallel >> logSolve
+
+
+    #--------------------------------------------------------------------------
+    echo -e "  - Start simulation (a few hours)"
+    mpirun -np $nC chtMultiRegionFoam -parallel >> logSolve
+
+
+else
+    #--------------------------------------------------------------------------
+    echo -e "  - Can not start simulation, '${RED}chtMultiRegionFoam$NC'"
+    echo -e " not available"
+
+
+fi
+
+
+#------------------------------------------------------------------------------
+echo -e "  - End\n\n"
+
+
+#------------------------------------------------------------------------------

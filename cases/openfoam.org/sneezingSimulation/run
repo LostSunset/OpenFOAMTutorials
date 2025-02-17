@@ -1,0 +1,91 @@
+#!/bin/bash
+#
+#-------------------------------------------------#
+# Contributor: Tobias Holzmann                    #
+# Updated on:  22 April 2020                      #
+#-------------------------------------------------#
+# Topic:       Sneezing Simulation                #
+# OpenFOAM:    7.x                                #
+#-------------------------------------------------#
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
+#-------------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+foamVersion="OpenFOAM-7.x"
+
+
+#------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+source clean
+source .color
+source .preamble
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create background mesh"
+ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Decompose background mesh"
+decomposePar >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Meshing with snappyHexMesh (~ 4 minutes)"
+mpirun -np 4 snappyHexMesh -overwrite -parallel >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Reconstruct the mesh"
+reconstructParMesh -constant -mergeTol 1e-6 >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Clean the case from processor folders"
+rm -rf process*
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Copy 0.org to 0"
+cp -r 0.orig 0
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Renumbering the mesh"
+renumberMesh -overwrite > logSolver
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Decompose the mesh"
+decomposePar >> logSolver
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Start the calculation (DPMFoam)"
+echo -e "     Note: Simulation performed using 30 cores in 20 h"
+mpirun -np 4 DPMFoam -parallel >> logSolver
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Simulation ended\n\n"
+
+
+#------------------------------------------------------------------------------

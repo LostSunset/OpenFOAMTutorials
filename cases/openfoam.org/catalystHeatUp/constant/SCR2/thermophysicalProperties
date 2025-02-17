@@ -1,0 +1,57 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  7.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      thermophysicalProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+thermoType
+{
+    type            heSolidThermo;
+    mixture         pureMixture;
+    transport       constIso;
+    thermo          hConst;
+    equationOfState rhoConst;
+    specie          specie;
+    energy          sensibleEnthalpy;
+}
+
+mixture
+{
+    //- Frozen water at -5 (engineeringtoolbox.com)
+    specie
+    {
+        nMoles      1;
+        molWeight   60.06;
+    }
+
+    transport
+    {
+        kappa   2;
+    }
+
+    thermodynamics
+    {
+        Hf      0;
+        Cp      744;
+    }
+
+    equationOfState
+    {
+        // 100 percentaage solid
+        //rho     2650;
+        // 10 percent
+        rho 265;
+    }
+}
+
+// ************************************************************************* //
