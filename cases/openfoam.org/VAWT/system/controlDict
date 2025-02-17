@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  6.x                                   |
+|  \\    /   O peration     | Version:  7.x                                   |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -66,7 +66,8 @@ libs
 //- Build ower own functions
 functions
 {
-    S
+    // For OpenFOAM 7.x not resolved until now
+    /*S
     {
         //- Here we build an new transport equations such as:
         //  ddt(rho, S) + div(phi,S) + laplacian(D,S) == Q 
@@ -96,36 +97,34 @@ functions
         //  Highly flexible
         fvOptions
         {
-            source
+            sourceForS
             {
                 type            scalarSemiImplicitSource;
                 active          true;
 
-                scalarSemiImplicitSourceCoeffs
+                //- Different selection modes possible such as points or
+                //  cellZones etc.
+                selectionMode   points;
+                volumeMode      specific;
+                points
+                4( 
+                    (-0.6  0.15 0.0025)
+                    (-0.6  0.13 0.0025)
+
+                    (-0.6 -0.21 0.0025)
+                    (-0.6 -0.23 0.0025)
+                );
+
+                //- Take care of the specific vs absolute value
+                injectionRateSuSp
                 {
-                    //- Different selection modes possible such as points or
-                    //  cellZones etc.
-                    selectionMode   points;
-                    points
-                    4( 
-                        (-0.6  0.15 0.0025)
-                        (-0.6  0.13 0.0025)
-
-                        (-0.6 -0.21 0.0025)
-                        (-0.6 -0.23 0.0025)
-                    );
-
-                    //- Take care of the specific vs absolute value
-                    volumeMode      specific;
-                    injectionRateSuSp
-                    {
-                        //- Value 2 starting at time t = 0
-                        S (2 0);
-                    }
+                    //- Value 2 starting at time t = 0
+                    S (2 0);
                 }
             }
         };
     }
+    */
 
     //- Additionally, include the residual functionallity. This will save
     //  the residuals into a file on the fly. Can be monitored using gnuplot

@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  6.x                                   |
+|  \\    /   O peration     | Version:  7.x                                   |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -45,6 +45,12 @@ timePrecision   6;
 
 runTimeModifiable true;
 
+// functions
+// {
+//      Use the scalarTransport function to get the white stripes 
+//      as given in the video. Furthermore, use fvOptions to add a source
+//      term to defined locations respectively cells
+// };
 }
 
 // ************************************************************************* //

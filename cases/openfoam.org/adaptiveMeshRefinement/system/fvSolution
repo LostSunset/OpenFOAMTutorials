@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  6.x                                   |
+|  \\    /   O peration     | Version:  7.x                                   |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -49,15 +49,15 @@ solvers
         relTol           0;
     }
 
-    "(U|k|omega|S)"
+    "(U|S)"
     {
-        solver          smoothSolver;
-        smoother        symGaussSeidel;
+        solver          PBiCG;
+        preconditioner  DILU;
         tolerance       1e-06;
         relTol          0.1;
     }
 
-    "(U|k|omega|S)Final"
+    "(U|S)Final"
     {
         $U;
         tolerance       1e-06;
@@ -66,21 +66,32 @@ solvers
 
     cellDisplacement
     {
-        solver          GAMG;
+        solver          PBiCG;
+        preconditioner  DILU
         tolerance       1e-5;
         relTol          0;
-        smoother        GaussSeidel;
-        cacheAgglomeration true;
-        nCellsInCoarsestLevel 10;
-        agglomerator    faceAreaPair;
-        mergeLevels     1;
     }
 }
 
 PIMPLE
 {
-    nCorrectors         2;
+    nCorrectors         3;
+    nOuterCorrectors    4;
     nNonOrthogonalCorrectors 0;
+}
+
+relaxationFactors
+{
+    fields
+    {
+        p       0.5;
+    }
+
+    equations
+    {
+        U       0.5;
+        S       0.8;
+    }
 }
 
 
