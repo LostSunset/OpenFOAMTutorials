@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  8                                     |
+|  \\    /   O peration     | Version:  9                                     |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -23,13 +23,13 @@ boundaryField
 {
     inlet
     {
-        type            fixedFluxPressure;
+        type            prghTotalPressure;
+        p0              uniform 100000;
         value           uniform 100000;
     }
     outlet
     {
-        type            prghTotalPressure;
-        p0              uniform 100000;
+        type            fixedFluxPressure;
         value           uniform 100000;
     }
     glass

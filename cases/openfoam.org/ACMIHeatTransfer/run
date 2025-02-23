@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  31 Juli 2020                       #
+# Updated on:  10 September 2021                  #
 #-------------------------------------------------#
 # Topic:       ACMI Tutorial and snappyHexMesh    #
-# OpenFOAM:    version 8 (Foundation)             #
+# OpenFOAM:    version 9 (Foundation)             #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-8"
+foamVersion="OpenFOAM-9"
 
 
 #------------------------------------------------------------------------------
@@ -101,7 +101,7 @@ then
     laplacianDyMFoam > logSimulation
 else
     echo -e "   - Can not start simulation, 'laplacianDyMFoam' not available"
-    echo -e "   - Available on https://bitbucket.org/shor-ty/laplaciandymfoam"
+    echo -e "   - Available on https://github.com/shor-ty/laplaciandymfoam"
 fi
 
 

@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  8                                     |
+|  \\    /   O peration     | Version:  9                                     |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -40,7 +40,7 @@ boundaryField
         type            externalWallHeatFluxTemperature;
         value           uniform 300;
 
-        q               1000;
+        q               uniform 1000;
         kappaMethod     fluidThermo;
         mode            flux;
     }

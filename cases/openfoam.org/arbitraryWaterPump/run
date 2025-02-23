@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  14 Januar 2021                     #
+# Updated on:  10 September 2021                  #
 #-------------------------------------------------#
 # Topic:       Simple case with cyclic BC (FAN)   #
-# OpenFOAM:    version 8 (Foundation)             #
+# OpenFOAM:    version 9 (Foundation)             #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-8"
+foamVersion="OpenFOAM-9"
 
 
 #------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
 
 
 #------------------------------------------------------------------------------
-echo -e "  - Meshing with snappyHexMesh (plus generating internal faces)"
+echo -e "  - Meshing with snappyHexMesh (generate internal faces)"
 snappyHexMesh -overwrite >> logMeshing
 
 
@@ -95,6 +95,7 @@ then
 
     #--------------------------------------------------------------------------
     echo -e "  - Start filling (several hours ~ 10h)"
+    exit
     mpirun -np 3 interFoam -parallel >> logSolve
 
 

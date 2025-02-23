@@ -30,7 +30,8 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "fvOptions.H"
+#include "fvModels.H"
+#include "fvConstraints.H"
 #include "simpleControl.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -60,12 +61,12 @@ int main(int argc, char *argv[])
             (
                 fvm::ddt(T) - fvm::laplacian(DT, T)
              ==
-                fvOptions(T)
+                fvModels.source(T)
             );
 
-            fvOptions.constrain(TEqn);
+            fvConstraints.constrain(TEqn);
             TEqn.solve();
-            fvOptions.correct(T);
+            fvConstraints.constrain(T);
         }
 
         #include "write.H"

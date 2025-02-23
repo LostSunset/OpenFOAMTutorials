@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  8                                     |
+|  \\    /   O peration     | Version:  9                                     |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -17,20 +17,13 @@ FoamFile
 
 solvers
 {
-    "rho.*"
+    alpha.air
     {
-        solver          PCG;
-        preconditioner  FDIC;
-        tolerance       0;
-        relTol          0;
+        max             0.9;
     }
 
     p
     {
-        /*solver          PCG;
-        preconditioner  DIC;
-        tolerance       1e-8;
-        relTol          0.01;*/
         solver          GAMG;
         tolerance       1e-06;
         relTol          0.01;
@@ -43,7 +36,7 @@ solvers
         relTol          0;
     }
 
-    "(U|h|e|k|epsilon|omega|R)"
+    "(U|h|e|k|epsilon|omega|R).air"
     {
         solver          PBiCGStab;
         preconditioner  DILU;
@@ -51,10 +44,18 @@ solvers
         relTol          0.1;
     }
 
-    "(U|h|e|k|epsilon|omega|R)Final"
+    "(U|h|e|k|epsilon|omega|R).airFinal"
     {
         $U;
         relTol          0;
+    }
+
+    cloud:alpha
+    {
+        solver          GAMG;
+        tolerance       1e-06;
+        relTol          0.1;
+        smoother        GaussSeidel;
     }
 }
 

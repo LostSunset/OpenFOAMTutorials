@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  8                                     |
+|  \\    /   O peration     | Version:  9                                     |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -42,7 +42,12 @@ mixture
     thermodynamics
     {
         Hf      0;
-        Cv      2027;       // Assumption cv = cp
+
+        // In former versions we used Cp
+        //Cp      2027;
+
+        // Cv = Cp - R/M
+        Cv        1565;
     }
 
     equationOfState

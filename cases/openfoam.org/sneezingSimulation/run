@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  31 Juli 2020                       #
+# Updated on:  20 September 2021                  #
 #-------------------------------------------------#
 # Topic:       Sneezing Simulation                #
-# OpenFOAM:    version 8 (Foundation)             #
+# OpenFOAM:    version 9 (Foundation)             #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-8"
+foamVersion="OpenFOAM-9"
 
 
 #------------------------------------------------------------------------------
@@ -43,12 +43,12 @@ decomposePar >> logMeshing
 
 #------------------------------------------------------------------------------
 echo -e "   - Meshing with snappyHexMesh (~ 4 minutes)"
-mpirun -np 4 snappyHexMesh -overwrite -parallel >> logMeshing
+mpirun -np 8 snappyHexMesh -overwrite -parallel >> logMeshing
 
 
 #------------------------------------------------------------------------------
 echo -e "   - Reconstruct the mesh"
-reconstructParMesh -constant -mergeTol 1e-6 >> logMeshing
+reconstructParMesh -constant >> logMeshing
 
 
 #------------------------------------------------------------------------------
@@ -80,8 +80,8 @@ decomposePar >> logSolver
 
 #------------------------------------------------------------------------------
 echo -e "   - Start the calculation (DPMFoam)"
-echo -e "     Note: Tobias performed the simulation using 30 cores in 20 h"
-mpirun -np 4 DPMFoam -parallel >> logSolver
+echo -e "     Note: Simulation performed using 30 cores in 20 h"
+mpirun -np 8 denseParticleFoam -parallel >> logSolver
 
 
 #------------------------------------------------------------------------------

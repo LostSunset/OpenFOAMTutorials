@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-
-###
+# -*- coding: utf-8 -*- ###
 ### This file is generated automatically by SALOME v7.7.1 with dump python functionality
 ###
 
@@ -73,12 +71,12 @@ smesh.SetName(backgroundMesh.GetMesh(), 'backgroundMesh')
 backgroundMesh.Compute()
 
 ## Export mesh
-try:
-  backgroundMesh.ExportUNV( r'{0}/cad/backgroundMesh.unv'.format(path) )
-except:
-  print 'ExportUNV() failed. Invalid file name?'
+#try:
+#  backgroundMesh.ExportUNV( r'{0}/cad/backgroundMesh.unv'.format(path) )
+#except:
+#  print 'ExportUNV() failed. Invalid file name?'
 
 if salome.sg.hasDesktop():
   salome.sg.updateObjBrowser(1)
 
-print 'Script end'
+#print 'Script end'

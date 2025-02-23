@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  7.x                                   |
+|  \\    /   O peration     | Version:  9                                     |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -75,7 +75,7 @@ functions
 
         regionType      patch;
         name            outlet;
-        operation       weightedAreaAverage;
+        operation       areaAverage;
         weightField     phi;
         surfaceFormat   off;
 

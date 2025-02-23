@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  31 Juli 2020                       #
+# Updated on:  10 September 2021                  #
 #-------------------------------------------------#
 # Topic:       Complex geometry meshing           #
-# OpenFOAM:    version 8 (Foundation)             #
+# OpenFOAM:    version 9 (Foundation)             #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-8"
+foamVersion="OpenFOAM-9"
 
 
 #------------------------------------------------------------------------------
@@ -72,12 +72,12 @@ decomposePar > logSolver
 
 #------------------------------------------------------------------------------
 echo -e "   - Renumber mesh for speedup (~5-15%)"
-mpirun -np 3 renumberMesh -overwrite -parallel >> logSolver
+mpirun -np 10 renumberMesh -overwrite -parallel >> logSolver
 
 
 #------------------------------------------------------------------------------
 echo -e "   - Start transient calculation (1-2 days to get the video result)"
-mpirun -np 3 pimpleFoam -parallel >> logSolver
+mpirun -np 10 pimpleFoam -parallel >> logSolver
 
 
 #------------------------------------------------------------------------------

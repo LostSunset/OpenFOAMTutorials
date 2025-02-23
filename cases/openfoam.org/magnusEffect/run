@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  31 Juli 2020                       #
+# Updated on:  10 September 2021                  #
 #-------------------------------------------------#
 # Topic:       Magnus effect                      #
-# OpenFOAM:    version 8 (Foundation)             #
+# OpenFOAM:    version 9 (Foundation)             #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-8"
+foamVersion="OpenFOAM-9"
 
 
 #------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ changeDictionary  >> logFile
 
 #------------------------------------------------------------------------------
 echo -e "   - Translate mesh to point (0 0 0)"
-transformPoints -translate "(0 -0.15 -0.1)"  >> logFile
+transformPoints "translate=(0 -0.15 -0.1)"  >> logFile
 
 
 #------------------------------------------------------------------------------

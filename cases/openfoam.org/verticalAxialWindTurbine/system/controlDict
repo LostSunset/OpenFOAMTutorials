@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  8                                     |
+|  \\    /   O peration     | Version:  9                                     |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -35,11 +35,12 @@ writeInterval   0.005;
 
 purgeWrite      0;
 
-writeFormat     binary;     // Recommended to store in binary - no cutoff
+writeFormat     binary;     // Recommended to store in binary - less cutoff
 
 writePrecision  6;
 
-writeCompression true;      // Recommended, saves space, read and write time
+writeCompression false;     // Recommended, saves space, read and write time
+                            // Dont use it if you have binary files
 
 timeFormat      general;
 
@@ -66,8 +67,13 @@ libs
 //- Build ower own functions
 functions
 {
-    // For OpenFOAM 7.x not resolved until now
-    /*S
+    // For OpenFOAM v9 this is not working as you need
+    // at least the commit: 987d5906
+    // This commit resolved the issue with the on-the-fly generation of 
+    // the passive scalar and applying the fvModels
+    // Tested using commit: 984066f81e
+    /*
+    S
     {
         //- Here we build an new transport equations such as:
         //  ddt(rho, S) + div(phi,S) + laplacian(D,S) == Q 
@@ -95,7 +101,7 @@ functions
 
         //- Build a source term Q at different points (in this case)
         //  Highly flexible
-        fvOptions
+        fvConstraints
         {
             sourceForS
             {

@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-|  \\    /   O peration     | Version:  8                                     |
+|  \\    /   O peration     | Version:  9                                     |
     \\  /    A nd           | Version:  dev
      \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
@@ -11,9 +11,11 @@ FoamFile
     format      ascii;
     class       dictionary;
     location    "constant";
-    object      particleProperties;
+    object      cloudProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+type        cloud;
 
 solution
 {
@@ -28,7 +30,10 @@ solution
         rho.air             cell;
         U.air               cellPoint;
         mu.air              cell;
+        alpha.air           cell;
     }
+
+    averagingMethod     dual;
 
     integrationSchemes
     {
@@ -352,46 +357,15 @@ subModels
 
     surfaceFilmModel none;
 
-    collisionModel none;
+    packingModel none;
 
-    pairCollisionCoeffs
-    {
-        maxInteractionDistance  0.0025;
-
-        writeReferredParticleCloud no;
-
-        pairModel pairSpringSliderDashpot;
-
-        pairSpringSliderDashpotCoeffs
-        {
-            useEquivalentSize   no;
-            alpha               0.02;
-            b                   1.5;
-            mu                  0.10;
-            cohesionEnergyDensity 0;
-            collisionResolutionSteps 12;
-        };
-
-        wallModel wallSpringSliderDashpot;
-
-        wallSpringSliderDashpotCoeffs
-        {
-            useEquivalentSize no;
-            collisionResolutionSteps 12;
-            youngsModulus   1e8;
-            poissonsRatio   0.23;
-            alpha           0.01;
-            b               1.5;
-            mu              0.09;
-            cohesionEnergyDensity 0;
-        };
-
-        U     U;
-    }
+    isotropyModel none;
 
     stochasticCollisionModel none;
 
     radiation off;
+
+    dampingModel none;
 }
 
 

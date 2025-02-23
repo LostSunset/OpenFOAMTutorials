@@ -6,17 +6,19 @@
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 Description
-    Calculates the average value of one or more fields on a patch.
+    Calculates the average values of fields on a patch.
 
 \*---------------------------------------------------------------------------*/
 
-name    wallPS;
+patch    wallPS;
+
 fields  (p);
+
+operation areaAverage;
 
 writeControl adjustableRunTime;
 writeInterval 0.1;
 
-operation areaAverage;
-#includeEtc "caseDicts/postProcessing/surfaceFieldValue/patch.cfg"
+#includeEtc "caseDicts/postProcessing/surfaceFieldValue/patchValue.cfg"
 
 // ************************************************************************* //

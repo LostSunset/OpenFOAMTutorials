@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  8                                     |
+|  \\    /   O peration     | Version:  9                                     |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -94,12 +94,10 @@ castellatedMeshControls
     // This is a featureEdgeMesh, read from constant/triSurface for now.
     features
     (
-        /*
         {
             file    "regionSTL.eMesh";
             level 0;
         }
-        */
     );
 
 
@@ -191,15 +189,15 @@ snapControls
 {
     //- Number of patch smoothing iterations before finding correspondence
     //  to surface
-    nSmoothPatch 3;
+    nSmoothPatch 4;
 
     //- Relative distance for points to be attracted by surface feature point
     //  or edge. True distance is this factor times local
     //  maximum edge length.
-    tolerance 1.5;
+    tolerance 1.3;
 
     //- Number of mesh displacement relaxation iterations.
-    nSolveIter 150;
+    nSolveIter 250;
 
     //- Maximum number of snapping relaxation iterations. Should stop
     //  before upon reaching a correct mesh.
@@ -209,17 +207,17 @@ snapControls
 
         //- Number of feature edge snapping iterations.
         //  Leave out altogether to disable.
-        nFeatureSnapIter 6;
+        nFeatureSnapIter 4;
 
         //- Detect (geometric) features by sampling the surface
-        implicitFeatureSnap true;
+        implicitFeatureSnap false;
 
         //- Use castellatedMeshControls::features
-        explicitFeatureSnap false;
+        explicitFeatureSnap true;
 
         //- Detect features between multiple surfaces
         //  (only for explicitFeatureSnap, default = false)
-        multiRegionFeatureSnap false;
+        multiRegionFeatureSnap true;
 }
 
 

@@ -1,19 +1,17 @@
 #!/bin/bash
-#
+# #-------------------------------------------------# Contributor: Tobias Holzmann                    #
+# Updated on:  10 August 2021                     #
 #-------------------------------------------------#
-# Contributor: Tobias Holzmann                    #
-# Updated on:  31 Juli 2020                       #
+# Updated on:  10 September 2021                  #
+# OpenFOAM:    version 9 (Foundation)             #
 #-------------------------------------------------#
-# Topic:       2D AMI generation using baffles    #
-# OpenFOAM:    version 8 (Foundation)             #
-#-------------------------------------------------#
+# OpenFOAM:    version 9 (Foundation)             #
+# Email:       community@Holzmann-cfd.com         #
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
-#-------------------------------------------------#
-
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-8"
+foamVersion="OpenFOAM-9"
 
 
 #------------------------------------------------------------------------------
@@ -87,7 +85,7 @@ createBaffles -overwrite >> logMeshing
 
 #------------------------------------------------------------------------------
 echo -e "   - Split baffles"
-mergeOrSplitBaffles -split -overwrite >> logMeshing
+splitBaffles -overwrite >> logMeshing
 
 
 #------------------------------------------------------------------------------
@@ -112,7 +110,15 @@ renumberMesh -overwrite > logSolver
 
 
 #------------------------------------------------------------------------------
-echo -e "   - Start transient calculation"
+echo -e "   - Start transient calculation without rotation (a few minutes)"
+sed 's|^endTime.*|endTime 4;|' -i system/controlDict
+pimpleFoam >> logSolver
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Start rotation (a few minutes)"
+sed 's|^endTime.*|endTime 10;|' -i system/controlDict
+cp constant/.dynamicMeshDict constant/dynamicMeshDict
 pimpleFoam >> logSolver
 
 

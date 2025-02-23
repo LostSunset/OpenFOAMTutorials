@@ -14,7 +14,7 @@
 echo -en "
 -------------------------------------------------------------------------------
 ${GRAY}Tutorial by Tobias Holzmann${NC} :: Generated during July 2016
-${GRAY}Build for OpenFOAM version${NC}  :: OpenFOAM-6.x
+${GRAY}Build for OpenFOAM version${NC}  :: OpenFOAM-9
 ${GRAY}Tested on system${NC}            :: Ubuntu 18.04.1
 ${GRAY}The case was updated on${NC}     :: 11 November 2018
 -------------------------------------------------------------------------------

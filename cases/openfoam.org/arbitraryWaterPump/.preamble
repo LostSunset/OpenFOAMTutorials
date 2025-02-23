@@ -2,7 +2,7 @@
 #
 #----------------------------------------------#
 # Contributor: Tobias Holzmann                 #
-# Updated on:  14 Januar 2021                  #
+# Updated on:  10 September 2021               #
 #----------------------------------------------#
 # Location:    https://Holzmann-cfd.com        #
 # Email:       community@Holzmann-cfd.com      #
@@ -14,18 +14,14 @@
 echo -en "
 -------------------------------------------------------------------------------
 ${GRAY}Tutorial by Tobias Holzmann${NC} :: Generated on February 2017
-${GRAY}Build for OpenFOAM version${NC}  :: OpenFOAM-8
-${GRAY}Tested on system${NC}            :: Ubuntu 20.04.1
-${GRAY}The case was updated on${NC}     :: 14 Januar 2021
+${GRAY}Build for OpenFOAM version${NC}  :: OpenFOAM-9
+${GRAY}Tested on system${NC}            :: Ubuntu 20.04.2
+${GRAY}The case was updated on${NC}     :: 10 September 2021
 -------------------------------------------------------------------------------
 
 
 ${GREEN}Topic: Create a simple mesh with correct cyclic BC${NC}
 -------------------------------------------------------------------------------
-Since OpenFOAM v8, Tobias is using the »fixedJump« boundary condition to solve
-the problem which was analyzed using the »fan« boundary condition in prior
-versions. This boundary condition does not exist anymore. One can also use the
-»fanPressure« boundary condition to get a more sophisticated approach
 "
 
 

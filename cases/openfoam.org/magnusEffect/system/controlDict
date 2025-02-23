@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  8                                     |
+|  \\    /   O peration     | Version:  9                                     |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -48,8 +48,12 @@ runTimeModifiable true;
 // functions
 // {
 //      Use the scalarTransport function to get the white stripes 
-//      as given in the video. Furthermore, use fvOptions to add a source
-//      term to defined locations respectively cells
+//      as given in the video. Furthermore, use fvConstraints to add a source
+//      term to defined locations respectively cells.
+//      For the fvConstraints you need at least the OpenFOAM commit:
+//      987d5906ef2e29c711d98b15ff400e5dedcf4500
+//      -> This commit resolves the issue of using fvConstraints while using
+//      
 // };
 }
 

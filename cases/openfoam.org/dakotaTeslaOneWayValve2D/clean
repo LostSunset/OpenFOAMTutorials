@@ -17,7 +17,6 @@ clear
 foamCleanTutorials
 rm -rf constant/triSurface/*.eMesh optimizationLog Log analyse*
 rm -rf 0 log* constant/extend* dakotaLog dakotaData* dakota.rst
-rm -rf cad/*.unv
 
 
 #-------------------------------------------------------------------------------

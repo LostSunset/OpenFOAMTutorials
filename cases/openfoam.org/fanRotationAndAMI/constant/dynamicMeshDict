@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  8                                     |
+|  \\    /   O peration     | Version:  9                                     |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -16,7 +16,7 @@ FoamFile
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 dynamicFvMesh           dynamicMotionSolverFvMesh;
-solver                  solidBody;
+motionSolver            solidBody;
 solidBodyMotionFunction rotatingMotion;
 
 
@@ -46,7 +46,7 @@ scale
 value
 {
     type            constant;       // Function1 -> constant
-    value           constant 62.8;
+    value           62.8;
 }
 
 

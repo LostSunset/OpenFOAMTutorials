@@ -45,8 +45,8 @@ dprepro $1 0/p.dakota 0/p
 
     # Reset flow (change BC)
     #---------------------------------------------------------------------------
-    sed -i '34s/.*/inlet/' constant/polyMesh/boundary
-    sed -i '40s/.*/outlet/' constant/polyMesh/boundary
+    sed -i '33s/.*/inlet/' constant/polyMesh/boundary
+    sed -i '39s/.*/outlet/' constant/polyMesh/boundary
 
 
     # Run case till converged
@@ -57,9 +57,10 @@ dprepro $1 0/p.dakota 0/p
 
     # Get flux  (average of inlet / outlet would be better here)
     #---------------------------------------------------------------------------
-    >&2 echo "   |--> Calc flux through outlet"
-    flux1=`postProcess -func 'patchIntegrate(name=outlet,phi)' \
+    >&2 echo -en "   |--> Calc flux through outlet:"
+    flux1=`postProcess -func 'patchFlowRate(patch=outlet)' \
         | tail -5 | head -1 | cut -d'=' -f2`
+    >&2 echo "$flux1"
 
 
     # Remove time directorys (reg expression would be nicer)
@@ -69,8 +70,8 @@ dprepro $1 0/p.dakota 0/p
 
     # Reverse flow (change BC)
     #---------------------------------------------------------------------------
-    sed -i '34s/.*/outlet/' constant/polyMesh/boundary
-    sed -i '40s/.*/inlet/' constant/polyMesh/boundary
+    sed -i '33s/.*/outlet/' constant/polyMesh/boundary
+    sed -i '39s/.*/inlet/' constant/polyMesh/boundary
 
 
     # Run case till converged
@@ -81,9 +82,10 @@ dprepro $1 0/p.dakota 0/p
 
     # Get flux  (average of inlet / outlet would be better here)
     #---------------------------------------------------------------------------
-    >&2 echo "   |--> Calc flux through outlet"
-    flux2=`postProcess -func 'patchIntegrate(name=outlet,phi)' \
+    >&2 echo -en "   |--> Calc flux through outlet:"
+    flux2=`postProcess -func 'patchFlowRate(patch=outlet)' \
         | tail -5 | head -1 | cut -d'=' -f2`
+    >&2 echo "$flux2"
 
 
     # Remove time directorys (reg expression would be nicer)
@@ -100,6 +102,7 @@ dprepro $1 0/p.dakota 0/p
     f1=`cat .flux1`
     f2=`cat .flux2`
     ratio=`awk -v a=$f1 -v b=$f2 'BEGIN { print (a)/(b) }'`
+    ratio=$(echo $ratio | tr ',' '.')
     funct=`echo "scale=6; 3-$ratio" | bc`
 
     if [ `echo $funct | grep "-"` ];

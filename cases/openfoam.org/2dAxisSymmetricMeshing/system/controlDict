@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  8                                     |
+|  \\    /   O peration     | Version:  9                                     |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -49,40 +49,5 @@ adjustTimeStep  yes;
 
 maxCo           0.2;
 
-functions
-
-(
-
-   massFlow
-
-   {
-
-      type patchMassFlow;
-
-     functionObjectLibs
-
-       (
-
-         "libsimpleFunctionObjects.so"
-
-       );
-
-     verbose true;
-
-     patches
-
-       (
-
-         inlet
-
-         outlet
-
-       );
-
-     factor 1.;
-
-   }
-    
-);
 
 // ************************************************************************* //

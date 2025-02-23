@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  8                                     |
+|  \\    /   O peration     | Version:  9                                     |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -88,12 +88,20 @@ SCR2
 Coupling
 {
     // All information in system/SCR*/fvOptions
-    type                constantHeatTransfer;
-    nbrRegionName       SCR1;
-    interpolationMethod cellVolumeWeight;
-    nbrModel            Coupling;
-    fields              (h);
-    semiImplicit        false;
+    type                interRegionHeatTransfer;
+
+    interRegionHeatTransferCoeffs
+    {
+        type                constant;
+
+        nbrRegionName       SCR1;
+        interpolationMethod cellVolumeWeight;
+        nbrModel            Coupling;
+        fields              (h);
+        semiImplicit        false;
+        AoV                 2000;
+        htc                 80;
+    }
 }
 
 
@@ -102,12 +110,20 @@ Coupling
 Coupling2
 {
     // All information in system/SCR*/fvOptions
-    type                constantHeatTransfer;
-    nbrRegionName       SCR2;
-    interpolationMethod cellVolumeWeight;
-    nbrModel            Coupling;
-    fields              (h);
-    semiImplicit        false;
+    type                interRegionHeatTransfer;
+
+    interRegionHeatTransferCoeffs
+    {
+        type                constant;
+
+        nbrRegionName       SCR2;
+        interpolationMethod cellVolumeWeight;
+        nbrModel            Coupling;
+        fields              (h);
+        semiImplicit        false;
+        AoV                 1400;
+        htc                 120;
+    }
 }
 
 

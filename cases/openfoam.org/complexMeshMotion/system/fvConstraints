@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  4.x                                   |
+|  \\    /   O peration     | Version:  9                                     |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -10,21 +10,29 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    object      changeDictionaryDict;
+    location    "system";
+    object      fvConstraint;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-boundary
+
+// That the fvConstraints work properly, you need the commit
+// 987d5906ef2e29c711d98b15ff400e5dedcf4500
+// otherwise, the fvOptions function does not work
+
+/*
+scalarConstraint
 {
-    front 
+    type            fixedValueConstraint;
+
+    selectionMode   cellZone;
+    cellZone        scalarZone;
+
+    fieldValues
     {
-        type            empty;
-    }
-    back 
-    {
-        type            empty;
+        S   1;
     }
 }
-
+*/
 
 // ************************************************************************* //

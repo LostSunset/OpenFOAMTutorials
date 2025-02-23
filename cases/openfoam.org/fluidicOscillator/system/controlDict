@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  8                                     |
+|  \\    /   O peration     | Version:  9                                     |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -96,19 +96,21 @@ functions
         {
             source
             {
-                type            semiImplicitSource;
+                type            scalarSemiImplicitSource;
                 active          true;
 
-                //- Add the source to the cells given in the cellZone
-                selectionMode   cellZone;
-                cellZone        c0;
-                volumeMode      specific;
-                sources
+                scalarSemiImplicitSourceCoeffs
                 {
-                    S
+                    //- Add the source to the cells given in the cellZone
+                    selectionMode   cellZone;
+                    cellZone        c0;
+
+                    //- Take care of the specific vs absolute value
+                    volumeMode      specific;
+                    injectionRateSuSp
                     {
-                        explicit constant 5;
-                        implicit 0;
+                        //- Value 5 starting at time t = 0
+                        S   (5 0);
                     }
                 }
             }

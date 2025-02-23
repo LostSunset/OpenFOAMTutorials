@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  8                                     |
+|  \\    /   O peration     | Version:  9                                     |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -198,6 +198,7 @@ relaxationFactors
     //          --> can be used in some cases, generally not stable
     equations
     {
+        S                         1;
         "(k|epsilon|U)"           0.6;
         "(k|epsilon|U)Final"      1;
     }

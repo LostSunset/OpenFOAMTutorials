@@ -23,9 +23,10 @@ environment
 
 method
     sampling
-        sample_type = lhs
-        samples     = 80
-        seed        = 124523
+    seed        = 124523
+    initial_samples = 10
+        sample_type lhs
+        #samples     = 80
 
 
 model

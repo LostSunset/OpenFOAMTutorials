@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  31 Juli 2020                       #
+# Updated on:  10 September 2021                  #
 #-------------------------------------------------#
 # Topic:       Meshing a helix                    #
-# OpenFOAM:    version 8 (Foundation)             #
+# OpenFOAM:    version 9 (Foundation)             #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-8"
+foamVersion="OpenFOAM-9"
 
 
 #------------------------------------------------------------------------------
@@ -45,10 +45,10 @@ cp constant/triSurface/regionSTL_orig.stl constant/triSurface/regionSTL.stl
 
 #------------------------------------------------------------------------------
 echo -e "   - Scaling"
-transformPoints -scale "(1000 1000 1000)" >> logFile
-surfaceTransformPoints -scale "(1000 1000 1000)" con*/tri*/regionSTL.stl \
+transformPoints "scale=(1000 1000 1000)" >> logFile
+surfaceTransformPoints "scale=(1000 1000 1000)" con*/tri*/regionSTL.stl \
     con*/tri*/regionSTL.stl >> logFile
-surfaceTransformPoints -scale "(1000 1000 1000)" con*/tri*/layer.stl \
+surfaceTransformPoints "scale=(1000 1000 1000)" con*/tri*/layer.stl \
     con*/tri*/layer.stl >> logFile
 
 
@@ -63,7 +63,7 @@ decomposePar >> logFile
 
 
 #------------------------------------------------------------------------------
-echo -e "   - Castallate and snap"
+echo -e "   - Castallate and snap (3 min)"
 mpirun -np 4 snappyHexMesh -overwrite -parallel>> logFile
 
 
@@ -76,7 +76,8 @@ sed '21s/.*/addLayers true;/' sys*/snappyHexMeshDict -i
 
 
 #------------------------------------------------------------------------------
-echo -e "   - Add layerer with snappyHexMesh (Coverage: 95,4%)"
+echo -e "   - Add layerer with snappyHexMesh (Coverage: 99.5%)"
+echo -e "     Former version reached 94.4%"
 mpirun -np 4 snappyHexMesh -overwrite -parallel>> logFile
 
 
@@ -90,7 +91,7 @@ sed -e '21s/.*/addLayers false;/' sys*/snappyHexMeshDict -i
 
 #------------------------------------------------------------------------------
 echo -e "   - Reconstruct mesh"
-reconstructParMesh -mergeTol 1e-6 -constant >> logFile
+reconstructParMesh -constant >> logFile
 #rm -r proces*
 
 
@@ -101,15 +102,15 @@ createPatch -overwrite >> logFile
 
 #------------------------------------------------------------------------------
 echo -e "   - Scaling"
-transformPoints -scale "(1e-3 1e-3 1e-3)" >> logFile
-surfaceTransformPoints -scale "(0.001 0.001 0.001)" con*/tri*/regionSTL.stl \
+transformPoints "scale=(1e-3 1e-3 1e-3)" >> logFile
+surfaceTransformPoints "scale=(0.001 0.001 0.001)" con*/tri*/regionSTL.stl \
     con*/tri*/regionSTL.stl >> logFile
-surfaceTransformPoints -scale "(0.001 0.001 0.001)" con*/tri*/layer.stl \
+surfaceTransformPoints "scale=(0.001 0.001 0.001)" con*/tri*/layer.stl \
     con*/tri*/layer.stl >> logFile
 
 
 #------------------------------------------------------------------------------
-echo -e "   - check the mesh (get errors):\n"
+echo -e "   - check the mesh and output errors:\n"
 checkMesh -constant | egrep '\*[A-Z].*'
 
 
