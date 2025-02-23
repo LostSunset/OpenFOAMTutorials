@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  9                                     |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -15,7 +15,9 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     pimpleDyMFoam;
+application     foamRun;
+
+solver          incompressibleFluid;
 
 startFrom       latestTime;
 
@@ -49,15 +51,13 @@ adjustTimeStep  yes;
 
 maxCo           0.1;
 
-libs ("libadaptiveFvMesh.so");
-
 functions
 {
-
     scalar
     {
         libs            ( "libsolverFunctionObjects.so" );
         type            scalarTransport;
+        diffusivity     none;
         field           S;
         schemesField    S;
         resetOnStartup  false;

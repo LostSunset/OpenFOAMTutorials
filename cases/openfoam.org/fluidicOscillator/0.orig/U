@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  9                                     |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -27,8 +27,7 @@ boundaryField
     }
     bottom
     {
-        type            pressureInletOutletVelocity;
-        value           uniform (0 0 0);
+        type            slip;
     }
     freeWalls
     {
@@ -91,8 +90,7 @@ boundaryField
     }
     top
     {
-        type            pressureInletOutletVelocity;
-        value           uniform (0 0 0);
+        type            slip;
     }
     walls
     {

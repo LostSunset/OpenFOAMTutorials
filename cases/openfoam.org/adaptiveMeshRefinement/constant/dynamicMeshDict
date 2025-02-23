@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  9                                     |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -15,10 +15,12 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dynamicFvMesh   dynamicRefineFvMesh;
-
-dynamicRefineFvMeshCoeffs
+topoChanger
 {
+    type        refiner;
+    libs        ( "libfvMeshTopoChangers.so" );
+    mover       none;
+
     // How often to refine
     refineInterval  1;
 
@@ -28,9 +30,6 @@ dynamicRefineFvMeshCoeffs
     // Refine field inbetween lower..upper
     lowerRefineLevel 0.1;
     upperRefineLevel 1;
-
-    // If value < unrefineLevel unrefine
-    unrefineLevel   0.005;
 
     // Have slower than 2:1 refinement
     nBufferLayers   1;

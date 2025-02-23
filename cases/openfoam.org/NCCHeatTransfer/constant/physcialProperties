@@ -1,0 +1,52 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      transportProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+thermoType
+{
+    type            heSolidThermo;                                                
+    mixture         pureMixture;                                                
+    transport       constIsoSolid;                                                      
+    thermo          eConst;                                                     
+    equationOfState rhoConst;                                                 
+    specie          specie;                                                     
+    energy          sensibleInternalEnergy;                                     
+}                                                                               
+                                                                                
+mixture                                                                         
+{                                                                               
+    // Copper
+    specie                                                                      
+    {                                                                           
+        molWeight       63;                                                   
+    }                                                                           
+    transport                                                                   
+    {                                                                           
+        kappa           385;
+    }                                                                           
+    thermodynamics                                                              
+    {                                                                           
+        hf              0;                                                      
+        Cv              385;                                                   
+    }                                                                           
+    equationOfState
+    {
+        rho             8960; 
+    }
+}
+
+
+// ************************************************************************* //

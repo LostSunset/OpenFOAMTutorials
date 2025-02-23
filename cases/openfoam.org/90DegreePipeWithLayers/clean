@@ -15,7 +15,7 @@ clear
 
 #-------------------------------------------------------------------------------
 foamCleanTutorials
-rm -f constant/triSurface/*.eMesh
+rm -f constant/triSurface/*.eMesh paraview.foam
 rm -rf 0 log* constant/extend*
 
 

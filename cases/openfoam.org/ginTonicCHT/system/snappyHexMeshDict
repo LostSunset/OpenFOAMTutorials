@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  9                                     |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -31,26 +31,27 @@ geometry
 {
     ginTonic.stl
     {
+        file "ginTonic.stl";
         type triSurfaceMesh;
         name ginTonic;
     }
 
-    iceCube1.stl
+    iceCube1
     {
+        file "iceCube1.stl";
         type triSurfaceMesh;
-        name iceCube1;
     }
 
-    iceCube2.stl
+    iceCube2
     {
+        file "iceCube2.stl";
         type triSurfaceMesh;
-        name iceCube2;
     }
 
-    glass.stl
+    glass
     {
+        file "glass.stl";
         type triSurfaceMesh;
-        name glass;
     }
 };
 

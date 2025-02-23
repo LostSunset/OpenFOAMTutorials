@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  9                                     |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -23,16 +23,15 @@ ddtSchemes
 gradSchemes
 {
     default         Gauss linear;
+    grad(U)         cellLimited Gauss linear 1;
 }
 
 divSchemes
 {
     default         none;
-    velocity        Gauss linearUpwindV grad(U);
 
-    div(alphaPhi.air,U.air) $velocity;
-    div(((alpha.air*nuEff.air)*dev2(T(grad(U.air))))) Gauss linear;
-    div(phiGByA,cloud:alpha) Gauss linear;
+    div(phi,U)      Gauss linearUpwindV grad(U);
+    div(((alpha*nuEff)*dev2(T(grad(U))))) Gauss linear;
 }
 
 laplacianSchemes

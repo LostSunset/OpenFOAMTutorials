@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  9                                     |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -27,16 +27,13 @@ boundaryField
     }
     bottom
     {
-        type            totalPressure;
-        rho             rho;
-        psi             none;
-        gamma           1;
-        p0              uniform 0;
+        type            fixedFluxPressure;
         value           uniform 0;
     }
     freeWalls
     {
         type            fixedFluxPressure;
+        value           $internalField;
     }
     front
     {
@@ -45,10 +42,11 @@ boundaryField
     inlet
     {
         type            fixedFluxPressure;
+        value           $internalField;
     }
     outlet
     {
-        type            totalPressure;
+        type            prghTotalPressure;
         rho             rho;
         psi             none;
         gamma           1;
@@ -57,16 +55,13 @@ boundaryField
     }
     top
     {
-        type            totalPressure;
-        rho             rho;
-        psi             none;
-        gamma           1;
-        p0              uniform 0;
+        type            fixedFluxPressure;
         value           uniform 0;
     }
     walls
     {
         type            fixedFluxPressure;
+        value           $internalField;
     }
 }
 

@@ -5,7 +5,7 @@
 # Updated on:  31 Juli 2020                       #
 #-------------------------------------------------#
 # Topic:       Heat Transfer                      #
-# OpenFOAM:    version 9 (Foundation)             #
+# OpenFOAM:    version 12 (Foundation)            #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-9"
+foamVersion="OpenFOAM-12"
 case="testDevice"
 
 

@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  10 September 2021                  #
+# Updated on:  19 Oktober 2024                    #
 #-------------------------------------------------#
 # Topic:       Meshing a pipe (45 degree)         #
-# OpenFOAM:    version 9 (Foundation)             #
+# OpenFOAM:    version 12 (Foundation)             #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-9"
+foamVersion="OpenFOAM-12"
 
 
 #------------------------------------------------------------------------------
@@ -57,12 +57,13 @@ snappyHexMesh >> logMeshing
 
 
 #------------------------------------------------------------------------------
-echo -e "   - Note 99.5% layers are generated. Changing the layer settings can"
+echo -e "   - Note 98.6% layers are generated. Changing the layer settings can"
 echo -e "     result in a 100% of layer generation. Problem here is the outlet"
 echo -e "     that causes tiny problems due to the fact that the mesh is "
 echo -e "     built under 45°. A 90° pipe will have 100% without changing the"
 echo -e "     layerControl parameters."
 
+touch paraview.foam
 
 #------------------------------------------------------------------------------
 echo -e "\n

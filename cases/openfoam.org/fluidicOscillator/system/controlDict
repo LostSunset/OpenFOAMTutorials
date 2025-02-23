@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  9                                     |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -15,7 +15,9 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     interFoam;
+application     foamRun;
+
+solver          incompressibleVoF;
 
 startFrom       latestTime;
 
@@ -47,7 +49,7 @@ runTimeModifiable yes;
 
 adjustTimeStep  on;
 
-maxCo           0.3;        // Controls the time step based on CFL
+maxCo           0.8;        // Controls the time step based on CFL
 
 maxAlphaCo      0.8;        // Additional time step control
 
@@ -78,43 +80,14 @@ functions
         //- Schemes used -> system/fvSchemes
         schemesField    S;
 
+        //- Diffusivity
+        diffusivity     none;
+
         //- Either use auto schemes or manuell added schemes
         autoSchemes     true;
 
         //- Corrections
-        nCorr           0;
-
-        //- Diffusion coefficient, if not used muEff is used
-        //D               0;
-
-        //- Reset the field on start-up
-        resetOnStartUp  false;
-
-        //- Build a source term Q at different points (in this case)
-        //  Highly flexible
-        fvOptions       
-        {
-            source
-            {
-                type            scalarSemiImplicitSource;
-                active          true;
-
-                scalarSemiImplicitSourceCoeffs
-                {
-                    //- Add the source to the cells given in the cellZone
-                    selectionMode   cellZone;
-                    cellZone        c0;
-
-                    //- Take care of the specific vs absolute value
-                    volumeMode      specific;
-                    injectionRateSuSp
-                    {
-                        //- Value 5 starting at time t = 0
-                        S   (5 0);
-                    }
-                }
-            }
-        };
+        nCorr           2;
     }
 
     //- Additionally, include the residual functionallity. This will save

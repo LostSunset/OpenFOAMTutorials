@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-|  \\    /   O peration     | Version:  9                                     |
-    \\  /    A nd           | Version:  dev
-     \\/     M anipulation  |
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
+|    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -19,7 +19,6 @@ type        cloud;
 
 solution
 {
-    active          true;
     coupled         false;
     transient       true;
     maxCo           0.8;
@@ -27,13 +26,11 @@ solution
 
     interpolationSchemes
     {
-        rho.air             cell;
-        U.air               cellPoint;
-        mu.air              cell;
-        alpha.air           cell;
+        rho             cell;
+        U               cellPoint;
+        mu              cell;
+        //alpha           cell;
     }
-
-    averagingMethod     dual;
 
     integrationSchemes
     {
@@ -51,18 +48,7 @@ solution
 
 constantProperties
 {
-    parcelTypeId 1;
-
-    rhoMin          1e-15;
-    minParcelMass   1e-15;
-
     rho0            1069;
-    youngsModulus   1e8;
-    poissonsRatio   0.35;
-
-    constantVolume  false;
-
-    alphaMax        0.99;
 }
 
 subModels
@@ -79,8 +65,7 @@ subModels
         {
             type            patchInjection;
             patchName       mouth_1;
-            massTotal       0;
-            U0          (0 0 0);
+            U0              (0 0 0);
 
             parcelBasisType fixed;
             duration        0.20;
@@ -89,15 +74,15 @@ subModels
             parcelsPerSecond 25000;
             flowRateProfile constant 1;
             
+            uniformParcelSize nParticle;
             nParticle 1;
 
             sizeDistribution
             {
-                type        general;
-                generalDistribution
-                {
-                    distribution 
-                    100( 
+                type        tabulatedDensity;
+                Q           0;
+                distribution 
+                ( 
                     (1E-05	1.01E-11)
                     (2E-05	1.15E-05)
                     (3E-05	4.07E-03)
@@ -198,8 +183,7 @@ subModels
                     (0.00098	1.75E+00)
                     (0.00099	1.65E+00)
                     (0.001	1.56E+00)
-                    );
-                }
+                );
             }
         }
 
@@ -207,8 +191,7 @@ subModels
         {
             type            patchInjection;
             patchName       mouth_2;
-            massTotal       0;
-            U0          (0 0 0);
+            U0              (0 0 0);
 
             parcelBasisType fixed;
             duration        0.2;
@@ -217,15 +200,15 @@ subModels
             parcelsPerSecond 40000;
             flowRateProfile constant 1;
             
+            uniformParcelSize nParticle;
             nParticle 1;
 
             sizeDistribution
             {
-                type        general;
-                generalDistribution
-                {
-                    distribution 
-                    100( 
+                type        tabulatedDensity;
+                Q           0;
+                distribution 
+                (
                     (1E-05	1.01E-11)
                     (2E-05	1.15E-05)
                     (3E-05	4.07E-03)
@@ -326,8 +309,7 @@ subModels
                     (0.00098	1.75E+00)
                     (0.00099	1.65E+00)
                     (0.001	1.56E+00)
-                    );
-                }
+                );
             }
         }
     }

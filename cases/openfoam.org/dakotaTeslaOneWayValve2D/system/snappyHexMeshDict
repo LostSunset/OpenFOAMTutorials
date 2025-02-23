@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  9                                     |
-|   \\  /    A nd           | Website:                                        |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -28,8 +28,9 @@ geometry
 {
     //- The file name in constant/triSurface
     //  This file contains the building
-    regionSTL.stl
+    regionSTL
     {
+        file "regionSTL.stl";
         type triSurfaceMesh;
 
         //- If your STL is build up of several STL's (watertight), then
@@ -40,7 +41,7 @@ geometry
         {
             inlet       { name inlet; }
             outlet      { name outlet; }
-            wall        { name wall; }
+            wall        { name walls; }
             front       { name front; }
             back        { name back; }
         }
@@ -107,7 +108,7 @@ castellatedMeshControls
 
     refinementSurfaces
     {
-        regionSTL.stl
+        regionSTL
         {
             // General refinement - more like a dummy value for regions
             level (0 0);
@@ -116,7 +117,7 @@ castellatedMeshControls
                 // Patch name and its refinement plus patch type
                 inlet       { level (0 0); patchInfo { type patch; }}
                 outlet      { level (0 0); patchInfo { type patch; }}
-                wall        { level (0 0); patchInfo { type wall; }}
+                walls       { level (0 0); patchInfo { type wall; }}
                 front       { level (0 0); patchInfo { type empty; }}
                 back        { level (0 0); patchInfo { type empty; }}
             }

@@ -82,7 +82,7 @@ dprepro $1 system/dakotaParameter.orig system/dakotaParameter
     # Run the simulation
     #---------------------------------------------------------------------------
     >&2 echo "   |--> Start stimulation"
-    simpleFoam > $logFolder_/solving
+    foamRun > $logFolder_/solving
 
 
     # Get the minimum, maximum and average value of the temperature on the

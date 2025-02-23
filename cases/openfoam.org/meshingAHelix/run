@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  10 September 2021                  #
+# Updated on:  28 Oktober 2024                    #
 #-------------------------------------------------#
 # Topic:       Meshing a helix                    #
-# OpenFOAM:    version 9 (Foundation)             #
+# OpenFOAM:    version 12 (Foundation)            #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-9"
+foamVersion="OpenFOAM-12"
 
 
 #------------------------------------------------------------------------------
@@ -77,7 +77,7 @@ sed '21s/.*/addLayers true;/' sys*/snappyHexMeshDict -i
 
 #------------------------------------------------------------------------------
 echo -e "   - Add layerer with snappyHexMesh (Coverage: 99.5%)"
-echo -e "     Former version reached 94.4%"
+echo -e "     Older version reached 94.4%"
 mpirun -np 4 snappyHexMesh -overwrite -parallel>> logFile
 
 
@@ -110,7 +110,7 @@ surfaceTransformPoints "scale=(0.001 0.001 0.001)" con*/tri*/layer.stl \
 
 
 #------------------------------------------------------------------------------
-echo -e "   - check the mesh and output errors:\n"
+echo -e "   - check the mesh and output errors if exists (probably no output)\n"
 checkMesh -constant | egrep '\*[A-Z].*'
 
 

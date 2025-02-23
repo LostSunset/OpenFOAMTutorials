@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  10 September 2021                  #
+# Updated on:  19 Oktober 2024                    #
 #-------------------------------------------------#
 # Topic:       Community Cristmas Competition     #
-# OpenFOAM:    version 9 (Foundation)             #
+# OpenFOAM:    version 12 (Foundation)             #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-9"
+foamVersion="OpenFOAM-12"
 
 
 #------------------------------------------------------------------------------
@@ -48,11 +48,23 @@ ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
 
 
 #------------------------------------------------------------------------------
-echo -e "   - Meshing with snappyHexMesh (~ 5 minutes)"
+echo -e "   - Decompose the mesh"
 decomposePar >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Meshing with snappyHexMesh (~ 5 minutes)"
 mpirun -np 4 snappyHexMesh -parallel -overwrite >> logMeshing
-reconstructParMesh -constant >> logMeshing
-transformPoints -scale "(0.1 0.1 0.1)" >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Check the mesh for analysis"
+mpirun -np 4 checkMesh -parallel >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Scale the mesh to correct dimensions"
+mpirun -np 4 transformPoints "scale=(0.1 0.1 0.1)" -parallel >> logMeshing
 
 
 #------------------------------------------------------------------------------
@@ -63,15 +75,12 @@ End Meshing\n
 
 
 #------------------------------------------------------------------------------
-echo -e "   - Copy 0.orig to 0"
-rm -rf 0
-cp -r 0.orig 0
-
-
-#------------------------------------------------------------------------------
-echo -e "   - Start simulation"
-echo -e "   - Decompose the case for parallel run"
-decomposePar -force > logSolver
+echo -e "   - Copy 0.orig to processor*/0"
+for i in $(ls -d proc*)
+do
+    rm -rf $i/0
+    cp -r 0.orig $i/0
+done
 
 
 #------------------------------------------------------------------------------
@@ -81,7 +90,7 @@ mpirun -np 4 renumberMesh -overwrite -parallel >> logSolver
 
 #------------------------------------------------------------------------------
 echo -e "   - Start steady-state calculation (5 to 60 minutes)"
-mpirun -np 4 simpleFoam -parallel >> logSolver
+mpirun -np 4 foamRun -parallel >> logSolver
 
 
 #------------------------------------------------------------------------------

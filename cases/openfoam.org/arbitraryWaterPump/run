@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  10 September 2021                  #
+# Updated on:  10 Februar 2025                    #
 #-------------------------------------------------#
 # Topic:       Simple case with cyclic BC (FAN)   #
-# OpenFOAM:    version 9 (Foundation)             #
+# OpenFOAM:    version 12 (Foundation)            #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-9"
+foamVersion="OpenFOAM-12"
 
 
 #------------------------------------------------------------------------------
@@ -75,62 +75,55 @@ echo -e "  - Initialize water level"
 setFields > logSolve
 
 
-#------------------------------------------------------------------------------
-if [ `which interFoam` ]
-then
-    #--------------------------------------------------------------------------
-    echo -e "  - Decompose the stuff"
-    decomposePar >> logSolve
+#--------------------------------------------------------------------------
+echo -e "  - Decompose the stuff"
+decomposePar >> logSolve
 
 
-    #--------------------------------------------------------------------------
-    echo -e "  - Renumber the mesh for speedup"
-    mpirun -np 3 renumberMesh -overwrite -parallel >> logSolve
+#--------------------------------------------------------------------------
+echo -e "  - Get number of processors in use"
+nProcs=$(foamDictionary system/decomposeParDict -entry numberOfSubdomains -value)
 
 
-    #--------------------------------------------------------------------------
-    echo -e "  - Manipulate controlDict"
-    sed 's|^endTime.*|endTime 10;|' -i system/controlDict
+#--------------------------------------------------------------------------
+echo -e "  - Renumber the mesh for speedup"
+mpirun -np $nProcs renumberMesh -overwrite -parallel -noZero -constant \
+    >> logSolve
 
 
-    #--------------------------------------------------------------------------
-    echo -e "  - Start filling (several hours ~ 10h)"
-    exit
-    mpirun -np 3 interFoam -parallel >> logSolve
+#--------------------------------------------------------------------------
+echo -en "  - Manipulate controlDict: "
+foamDictionary system/controlDict -entry endTime -set 10
 
 
-    #--------------------------------------------------------------------------
-    echo -e "  - Reconstruct latest time"
-    reconstructPar -latestTime >> logSolve
+#--------------------------------------------------------------------------
+echo -e "  - Start filling (several hours ~ 10h)"
+mpirun -np $nProcs foamRun -parallel >> logSolve
 
 
-    #--------------------------------------------------------------------------
-    echo -e "  - Change boundary condition for U and p"
-    changeDictionary -latestTime >> logSolve
+#--------------------------------------------------------------------------
+echo -e "  - Reconstruct latest time"
+reconstructPar -latestTime >> logSolve
 
 
-    #--------------------------------------------------------------------------
-    echo -e "  - Update fields on processors"
-    decomposePar -fields -latestTime >> logSolve
+#--------------------------------------------------------------------------
+echo -e "  - Change boundary condition for U and p"
+changeDictionary -latestTime >> logSolve
 
 
-    #--------------------------------------------------------------------------
-    echo -e "  - Manipulate controlDict"
-    sed 's|^endTime.*|endTime 30;|' -i system/controlDict
+#--------------------------------------------------------------------------
+echo -e "  - Update fields on processors"
+decomposePar -fields -latestTime >> logSolve
 
 
-    #--------------------------------------------------------------------------
-    echo -e "  - Start pumping + filling (several hours ~ 10h)"
-    mpirun -np 3 interFoam -parallel >> logSolve
+#--------------------------------------------------------------------------
+echo -en "  - Manipulate controlDict: "
+foamDictionary system/controlDict -entry endTime -set 30
 
 
-else
-    #--------------------------------------------------------------------------
-    echo -e "  - Can not start simulation, '${RED}interFoam$NC'"
-    echo -e " not available"
-
-
-fi
+#--------------------------------------------------------------------------
+echo -e "  - Start pumping + filling (several hours ~ 10h)"
+mpirun -np $nProcs foamRun -parallel >> logSolve
 
 
 #------------------------------------------------------------------------------

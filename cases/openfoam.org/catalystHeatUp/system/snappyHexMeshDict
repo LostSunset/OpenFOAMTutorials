@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  9                                     |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -21,27 +21,28 @@ addLayers         false;
 
 geometry
 {
-	regionSTL.stl
+	regionSTL
 	{
 		type triSurfaceMesh;
+        file "regionSTL.stl";
 		regions
 		{
-			inlet { name inlet; };
-			outlet { name outlet; };
-			walls { name walls; };
+			inlet   { name inlet; };
+			outlet  { name outlet; };
+			walls   { name walls; };
 		}
 	}
 
-    SCR1.stl
+    SCR1
     {
         type triSurfaceMesh;
-        name SCR1;
+        file "SCR1.stl";
     }
 
-    SCR2.stl
+    SCR2
     {
         type triSurfaceMesh;
-        name SCR2;
+        file "SCR2.stl";
     }
 };
 
@@ -59,14 +60,37 @@ castellatedMeshControls
 
     refinementSurfaces
     {
-		regionSTL.stl
+		regionSTL
 		{
 			level (0 0);
 			regions
 			{
-				inlet { level (0 0); patchInfo { type patch; }};
-				outlet { level (0 0); patchInfo { type patch; }};
-				walls { level (0 0); patchInfo { type patch; }};
+				inlet 
+                { 
+                    level (0 0); 
+                    patchInfo 
+                    { 
+                        type patch; 
+                    }
+                };
+
+				outlet 
+                { 
+                    level (0 0);
+                    patchInfo 
+                    { 
+                        type patch; 
+                    }
+                };
+
+				walls 
+                {
+                    level (0 0);
+                    patchInfo
+                    {
+                        type wall;
+                    }
+                }
 		    }
         }
 
@@ -75,6 +99,7 @@ castellatedMeshControls
             level (0 0);
             cellZone SCR1;
             faceZone SCR1;
+            //faceZoneType baffle;
             cellZoneInside inside;
 	    }
 
@@ -83,13 +108,14 @@ castellatedMeshControls
             level (0 0);
             cellZone SCR2;
             faceZone SCR2;
+            //faceZoneType baffle;
             cellZoneInside inside;
 	    }
     }
 
     refinementRegions
     {
-        regionSTL.stl
+        regionSTL
         {
             mode inside;
             levels ((0 1));
@@ -112,8 +138,8 @@ snapControls
     //- Number of patch smoothing iterations before finding correspondence
     //  to surface
     nSmoothPatch 3;
-    tolerance 1.2;
-    nSolveIter 200;
+    tolerance 1.1;
+    nSolveIter 100;
 
     //- Maximum number of snapping relaxation iterations. Should stop
     //  before upon reaching a correct mesh.

@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  10 September 2021                  #
+# Updated on:  11 Februar 2025                    #
 #-------------------------------------------------#
 # Topic:       Simple case with cyclic BC (FAN)   #
-# OpenFOAM:    version 9 (Foundation)             #
+# OpenFOAM:    version 12 (Foundation)            #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-9"
+foamVersion="OpenFOAM-12"
 
 
 #------------------------------------------------------------------------------
@@ -53,21 +53,25 @@ snappyHexMesh -overwrite >> logMeshing
 
 
 #------------------------------------------------------------------------------
-echo -e "  - Split mesh into regions"
-splitMeshRegions -cellZones -overwrite >> logMeshing
+echo -e "  - Split mesh into its different regions (based on cellZones)"
+echo -e "    Note: If -defaultRegionName is not specified, the regions that"
+echo -e "    do not containt to one cellZone goes to the default one named:"
+echo -e "    >> region1 <<"
+splitMeshRegions -cellZones -defaultRegionName air -overwrite >> logMeshing
 
 
 #------------------------------------------------------------------------------
 echo -e "  - Remove not needed meshes and dictionaries"
-rm -rf constant/polyMesh constant/region1 constant/glass 0 system/domain* \
-    system/glass
+rm -rf constant/polyMesh constant/air constant/glass 0 system/air \
+    system/glass constant/region* system/region*
 
 
 #------------------------------------------------------------------------------
-echo -e "\n
--------------------------------------------------------------------------------
-End Meshing\n
-"
+echo -e "  - Rename the boundary names (e.g., the connection to air which we"
+echo -e "    dont have)"
+createPatch -region ginTonic -overwrite > logMeshing
+createPatch -region iceCube1 -overwrite >> logMeshing
+createPatch -region iceCube2 -overwrite >> logMeshing
 
 
 #------------------------------------------------------------------------------
@@ -76,19 +80,18 @@ rm -rf 0
 cp -r 0.orig 0
 
 
+#------------------------------------------------------------------------------
+echo -e "  - Set up the correct boundary conditions and initial values"
+changeDictionary -region ginTonic >> logMeshing
+changeDictionary -region iceCube1 >> logMeshing
+changeDictionary -region iceCube2 >> logMeshing
+
 
 #------------------------------------------------------------------------------
-echo -e "  - Rename the boundary names"
-createPatch -region ginTonic -overwrite > logSolve
-createPatch -region iceCube1 -overwrite >> logSolve
-createPatch -region iceCube2 -overwrite >> logSolve
-
-
-#------------------------------------------------------------------------------
-echo -e "  - Set up the boundary conditions and initial values"
-changeDictionary -region ginTonic >> logSolve
-changeDictionary -region iceCube1 >> logSolve
-changeDictionary -region iceCube2 >> logSolve
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n
+"
 
 
 #------------------------------------------------------------------------------
@@ -102,41 +105,28 @@ ln -s ../thermoPropertiesSolid/* .
 cd ../../
 
 
-#------------------------------------------------------------------------------
-if [ `which chtMultiRegionFoam` ]
-then
-
-    #--------------------------------------------------------------------------
-    echo -e "  - Get core numbers"
-    nC=`cat system/decomposeParDict | grep "numberOf" | cut -d' ' -f2 | \
-        cut -d';' -f1`
-
-    #--------------------------------------------------------------------------
-    echo -e "  - Decompose the stuff"
-    decomposePar -region ginTonic >> logSolve
-    decomposePar -region iceCube1 >> logSolve
-    decomposePar -region iceCube2 >> logSolve
+#--------------------------------------------------------------------------
+echo -e "  - Get core numbers"
+nC=$(foamDictionary system/decomposeParDict -entry numberOfSubdomains -value)
 
 
-    #--------------------------------------------------------------------------
-    echo -e "  - Renumber the mesh"
-    mpirun -np $nC renumberMesh -region ginTonic -overwrite -parallel >> logSolve
-    mpirun -np $nC renumberMesh -region iceCube1 -overwrite -parallel >> logSolve
-    mpirun -np $nC renumberMesh -region iceCube2 -overwrite -parallel >> logSolve
+#--------------------------------------------------------------------------
+echo -e "  - Decompose the stuff"
+decomposePar -region ginTonic >> logSolve
+decomposePar -region iceCube1 >> logSolve
+decomposePar -region iceCube2 >> logSolve
 
 
-    #--------------------------------------------------------------------------
-    echo -e "  - Start simulation (a few hours)"
-    mpirun -np $nC chtMultiRegionFoam -parallel >> logSolve
+#--------------------------------------------------------------------------
+echo -e "  - Renumber the mesh"
+mpirun -np $nC renumberMesh -region ginTonic -overwrite -parallel >> logSolve
+mpirun -np $nC renumberMesh -region iceCube1 -overwrite -parallel >> logSolve
+mpirun -np $nC renumberMesh -region iceCube2 -overwrite -parallel >> logSolve
 
 
-else
-    #--------------------------------------------------------------------------
-    echo -e "  - Can not start simulation, '${RED}interFoam$NC'"
-    echo -e " not available"
-
-
-fi
+#--------------------------------------------------------------------------
+echo -e "  - Start simulation (a few hours)"
+mpirun -np $nC foamMultiRun -parallel >> logSolve
 
 
 #------------------------------------------------------------------------------

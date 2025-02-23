@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  10 September 2021                  #
+# Updated on:  10 Februar 2025                    #
 #-------------------------------------------------#
 # Topic:       Bifluidic Oscillator               #
-# OpenFOAM:    version 9 (Foundation)             #
+# OpenFOAM:    version 12 (Foundation)            #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-9"
+foamVersion="OpenFOAM-12"
 
 
 #------------------------------------------------------------------------------
@@ -55,10 +55,7 @@ surfaceFeatures >> logMeshing
 
 
 #------------------------------------------------------------------------------
-echo -e "   - Meshing with snappyHexMesh (~ 5 minutes)"
-sed 's/^castellatedMesh .*/castellatedMesh true;/' system/snappyHexMeshDict -i
-sed 's/^snap .*/snap true;/' system/snappyHexMeshDict -i
-sed 's/^addLayers .*/addLayers false;/' system/snappyHexMeshDict -i
+echo -e "   - Meshing with snappyHexMesh with layers"
 snappyHexMesh -overwrite >> logMeshing
 
 
@@ -69,34 +66,14 @@ extrudeMesh >> logMeshing
 
 
 #------------------------------------------------------------------------------
-echo -e "   - Move mesh to correct possition (for STL, POSTPROCESSING)"
-transformPoints -translate "(0 -0.005 0)"  >> logMeshing
+echo -e "   - Move mesh to correct possition (for STL, postProcessing)"
+transformPoints "translate=(0 -0.005 0)"  >> logMeshing
 
 
 #------------------------------------------------------------------------------
-echo -e "   - Remove not necessary boundarys"
-createPatch -overwrite  >> logMeshing
-
-
-#------------------------------------------------------------------------------
-echo -e "   - Inserting layers"
-sed 's/^castellatedMesh .*/castellatedMesh false;/' system/snappyHexMeshDict -i
-sed 's/^snap .*/snap false;/' system/snappyHexMeshDict -i
-sed 's/^addLayers .*/addLayers true;/' system/snappyHexMeshDict -i
-rm constant/polyMesh/*Level
-snappyHexMesh -overwrite >> logMeshing
-
-
-#------------------------------------------------------------------------------
-echo -e "   - Creating cell zone set for passiv scalar"
-rm -r constant/polyMesh/sets
-setSet -batch system/setSetDict >> logMeshing
-
-
-#------------------------------------------------------------------------------
-echo -e "   - Transform cell-zone-set to cellZone"
-setsToZones >> logMeshing
-rm -r VTK
+echo -e "   - Creating cell zone set for passiv scalar (alternativ topoSet)"
+topoSet >> logMeshing
+rm constant/polyMesh/sets
 
 
 #------------------------------------------------------------------------------
@@ -112,15 +89,23 @@ cp -r 0.orig 0
 
 
 #------------------------------------------------------------------------------
-echo -e "   - Start simulation"
+echo -e "   - Decompose the mesh to four processors"
+decomposePar -force > logSolver
+
+
+#------------------------------------------------------------------------------
 echo -e "   - Renumber mesh for speedup (~5-15%)"
-renumberMesh -overwrite > logSolver
-setFields >> logSolver
+mpirun -np 4 renumberMesh -overwrite -parallel >> logSolver
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Pre-Init the field for alpha"
+mpirun -np 4 setFields -parallel >> logSolver
 
 
 #------------------------------------------------------------------------------
 echo -e "   - Start transient calculation (a few hours, run over night)"
-interFoam >> logSolver
+mpirun -np 4 foamRun >> logSolver
 
 
 #------------------------------------------------------------------------------

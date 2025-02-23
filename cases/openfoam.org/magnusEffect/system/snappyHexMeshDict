@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  9                                     |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -29,10 +29,10 @@ addLayers       true;
 // - to 'snap' the mesh boundary to the surface
 geometry
 {
-    cylinder.stl
+    cylinder
     {
+        file "cylinder.stl";
         type triSurfaceMesh;
-        name cylinder;
     }
 };
 
@@ -78,8 +78,6 @@ castellatedMeshControls
     features
     (
     );
-
-
 
     // Surface based refinement
     // ~~~~~~~~~~~~~~~~~~~~~~~~

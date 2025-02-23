@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-|  \\    /   O peration     | Version:  9                                     |
-    \\  /    A nd           | Version:  dev
-     \\/     M anipulation  |
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
+|    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -15,7 +15,9 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     TEGFoam;
+application     foamRun;
+
+solver          solverTEGModule
 
 startFrom       latestTime;
 
@@ -25,7 +27,7 @@ stopAt          endTime;
 
 endTime         180;
 
-deltaT          0.01;
+deltaT          0.005;
 
 writeControl    runTime;
 

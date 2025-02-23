@@ -1,0 +1,105 @@
+#!/bin/bash
+#
+#-------------------------------------------------#
+# Contributor: Tobias Holzmann                    #
+# Updated on:  10 Februar 2025                    #
+#-------------------------------------------------#
+# Topic:       ACMI Tutorial and snappyHexMesh    #
+# OpenFOAM:    version 12 (Foundation)            #
+#-------------------------------------------------#
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
+#-------------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+foamVersion="OpenFOAM-12"
+
+
+#------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+source clean
+source .color
+source .preamble
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create background mesh"
+ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Extract feature edges"
+surfaceFeatures >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Meshing with snappyHexMesh (~ 20 seconds)"
+snappyHexMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Split the baffles and duplicate the points"
+splitBaffles -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Merge connect_slave + interface, and remove not necessary"
+echo -e "     boundaries and rename connect patch"
+echo -e "     Very simple now with NCC approach - Tobi likes it"
+createPatch -overwrite  >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Extrude one patch to make a 2D mesh"
+flattenMesh >> logMeshing
+extrudeMesh >> logMeshing
+rm -rf 0 constant/polyMesh/*Level
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create nonConformal patches"
+createNonConformalCouples -overwrite interfaceStatic interfaceMoving \
+    >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Creating the cell zone that moves up and down"
+topoSet >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Renumber the mesh for speedup"
+renumberMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Copy 0.orig to 0"
+cp -r 0.orig 0
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Start simulation (approximately 5-10min)"
+foamRun > logSimulation
+
+
+#------------------------------------------------------------------------------
+echo -e "\nEnd\n\n"
+
+
+#------------------------------------------------------------------------------

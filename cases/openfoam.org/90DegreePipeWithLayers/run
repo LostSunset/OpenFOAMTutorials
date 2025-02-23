@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  10 September 2021                  #
+# Updated on:  19 Oktober 2024                    #
 #-------------------------------------------------#
 # Topic:       Meshing a pipe (90 degree)         #
-# OpenFOAM:    version 9 (Foundation)             #
+# OpenFOAM:    version 12 (Foundation)             #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-9"
+foamVersion="OpenFOAM-12"
 
 
 #------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ ideasUnvToFoam cad/backgroundMesh.unv >> logMeshing
 #------------------------------------------------------------------------------
 echo -e "   - Meshing with snappyHexMesh"
 snappyHexMesh >> logMeshing
-
+touch paraview.foam
 
 #------------------------------------------------------------------------------
 echo -e "\n

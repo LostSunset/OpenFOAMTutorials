@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  9                                     |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -19,16 +19,16 @@ solvers
 {
     p
     {
-        solver          GAMG;
-        tolerance       1e-06;
-        relTol          0.1;
-        smoother        GaussSeidel;
-        nPreSweeps      0;
-        nPostSweeps     2;
-        cacheAgglomeration on;
-        agglomerator    faceAreaPair;
-        nCellsInCoarsestLevel 10;
-        mergeLevels     1;
+        solver                  GAMG;
+        tolerance               1e-06;
+        relTol                  0.1;
+        smoother                GaussSeidel;
+        nPreSweeps              0;
+        nPostSweeps             2;
+        cacheAgglomeration      on;
+        agglomerator            faceAreaPair;
+        nCellsInCoarsestLevel   10;
+        mergeLevels             1;
     }
 
     pFinal
@@ -43,16 +43,22 @@ solvers
         solver          smoothSolver;
         smoother        GaussSeidel;
         tolerance       1e-05;
+        relTol          0.1;
+    }
+
+    "(U|S)Final"
+    {
+        solver          smoothSolver;
+        smoother        GaussSeidel;
+        tolerance       1e-05;
         relTol          0;
     }
 }
 
-PISO
+PIMPLE
 {
     nCorrectors     2;
     nNonOrthogonalCorrectors 0;
-    pRefCell        0;
-    pRefValue       0;
 }
 
 

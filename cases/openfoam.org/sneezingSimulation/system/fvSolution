@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  9                                     |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -17,11 +17,6 @@ FoamFile
 
 solvers
 {
-    alpha.air
-    {
-        max             0.9;
-    }
-
     p
     {
         solver          GAMG;
@@ -36,7 +31,7 @@ solvers
         relTol          0;
     }
 
-    "(U|h|e|k|epsilon|omega|R).air"
+    "(U|h|e|k|epsilon|omega|R)"
     {
         solver          PBiCGStab;
         preconditioner  DILU;
@@ -44,18 +39,10 @@ solvers
         relTol          0.1;
     }
 
-    "(U|h|e|k|epsilon|omega|R).airFinal"
+    "(U|h|e|k|epsilon|omega|R)Final"
     {
         $U;
         relTol          0;
-    }
-
-    cloud:alpha
-    {
-        solver          GAMG;
-        tolerance       1e-06;
-        relTol          0.1;
-        smoother        GaussSeidel;
     }
 }
 

@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  9                                     |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -14,7 +14,9 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     simpleFoam;
+application     foamRun;
+
+solver          incompressibleFluid;
 
 startFrom       latestTime;
 
@@ -56,11 +58,16 @@ functions
     S
     {
         type            scalarTransport;
-        writeInterval   outputTime;
+
         field           S;
-        D               0.2;
         schemesField    S;
-        nCorr           0;
+
+        diffusivity     viscosity;
+        alphal          1;
+        alphat          1;
+        //nCorr           100;
+        //tolerance       5e-5;
+
         resetOnStartUp  false;
     }
 

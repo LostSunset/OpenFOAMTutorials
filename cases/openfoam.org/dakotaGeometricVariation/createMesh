@@ -22,18 +22,26 @@ rm -rf constant/polyMesh
 
 
 #------------------------------------------------------------------------------
-echo -e "   - Create mesh"
+echo -e "   - Create background mesh"
 blockMesh > logMeshing
 
 
 #------------------------------------------------------------------------------
-echo -e "   - Rotate baffles"
+echo -e "   - Rotate baffles (the geometry)"
 source system/rotateBaffles >> logMeshing
 
 
 #------------------------------------------------------------------------------
 echo -e "   - Adding baffles to the mesh"
 snappyHexMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Change front/back patch to type empty for flattenMesh"
+foamDictionary constant/polyMesh/boundary -entry entry0/front/type -set empty \
+    >> logMeshing
+foamDictionary constant/polyMesh/boundary -entry entry0/back/type -set empty \
+    >> logMeshing
 
 
 #------------------------------------------------------------------------------

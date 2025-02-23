@@ -52,7 +52,7 @@ dprepro $1 0/p.dakota 0/p
     # Run case till converged
     #---------------------------------------------------------------------------
     >&2 echo "   |--> Run case in flow direction"
-    simpleFoam > $logFolder_/flowDirectionLog
+    foamRun > $logFolder_/flowDirectionLog
 
 
     # Get flux  (average of inlet / outlet would be better here)

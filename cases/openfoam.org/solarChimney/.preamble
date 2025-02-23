@@ -2,7 +2,7 @@
 #
 #----------------------------------------------#
 # Contributor: Tobias Holzmann                 #
-# Updated on:  10 September 2021               #
+# Updated on:  10 Februar 2025                 #
 #----------------------------------------------#
 # Location:    https://Holzmann-cfd.com        #
 # Email:       community@Holzmann-cfd.com      #
@@ -14,9 +14,9 @@
 echo -en "
 -------------------------------------------------------------------------------
 ${GRAY}Tutorial by Tobias Holzmann${NC} :: Generated on February 2018
-${GRAY}Build for OpenFOAM version${NC}  :: OpenFOAM-9
-${GRAY}Tested on system${NC}            :: Ubuntu 20.04.2
-${GRAY}The case was updated on${NC}     :: 10 September 2021
+${GRAY}Build for OpenFOAM version${NC}  :: OpenFOAM-12
+${GRAY}Tested on system${NC}            :: Ubuntu 24.04.1
+${GRAY}The case was updated on${NC}     :: 10 Februar 2025
 
 
 ${GREEN}Topic: Buoyancy driven flows (Solar Chimney)${NC}

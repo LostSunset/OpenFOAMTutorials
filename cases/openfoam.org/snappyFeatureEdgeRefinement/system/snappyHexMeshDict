@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  9                                     |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -28,10 +28,10 @@ addLayers         false;
 // - to 'snap' the mesh boundary to the surface
 geometry
 {
-    cylinder.stl
+    cylinder
     {
+        file "cylinder.stl";
         type triSurfaceMesh;
-        name cyl;
     }
 };
 
@@ -84,8 +84,8 @@ castellatedMeshControls
     features
     (
         {
-        file "featureEdges.eMesh";
-        level 2;
+            file "featureEdges.eMesh";
+            level 2;
         }
     );
 
@@ -102,7 +102,7 @@ castellatedMeshControls
 
     refinementSurfaces
     {
-        cyl
+        cylinder
         {
             // Surface-wise min and max refinement level
             level (0 0);

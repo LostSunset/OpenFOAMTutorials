@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  9                                     |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -23,25 +23,34 @@ internalFacesOnly true;
 // Baffles to create.
 baffles
 {
-    // NOTE: cyclicAMI patches MUST BE defined PRIOR to their associted
-    //       blockage patches
-
     baffle 
     {
         //- Use predefined faceZone to select faces and orientation.
         type        faceZone;
         zoneName    fanPatch;
 
-        patchPairs
+        owner
         {
-            type    cyclic;
+            name            baffle_master;
+            type            cyclic;
+            neighbourPatch  baffle_slave;
+            transform       none;
 
             patchFields
             {
-                ".*"
-                {
-                    type    cyclic;
-                }
+            }
+        }
+
+        neighbour
+        {
+            name            baffle_slave;
+            type            cyclic;
+            neighbourPatch  baffle_master;
+            transform       none;
+
+            patchFields
+            {
+            }
         }
     }
 }

@@ -1,0 +1,99 @@
+#!/bin/bash
+#
+#-------------------------------------------------#
+# Contributor: Tobias Holzmann                    #
+# Updated on:  10 Februar 2025                    #
+#-------------------------------------------------#
+# Topic:       Simple ACMI tutorial               #
+# OpenFOAM:    version 12 (Foundation)            #
+#-------------------------------------------------#
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
+#-------------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+foamVersion="OpenFOAM-12"
+
+
+#------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+source clean
+source .color
+source .preamble
+
+
+#------------------------------------------------------------------------------
+if [ -f cad/backgroundMesh.unv ];
+then
+    echo "   - Background mesh exist, proceed..."
+else
+    echo "   - No background mesh exist, create one using the ACMI.py file"
+    echo ""
+    exit
+fi
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create background mesh"
+ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Meshing with snappyHexMesh (~ 10 seconds)"
+snappyHexMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Using NCC the creation of the interface is super easy now"
+echo -e "     We build the two patches using createPatch"
+createPatch -overwrite  >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create nonConformal patches. Since we used faceType boundary"
+echo -e "     within snappyHexMesh, the points are already split"
+createNonConformalCouples -overwrite interfaceOuter interfaceInner >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create the cell zone that is going to be moved"
+topoSet >> logMeshing
+rm -r 0
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Renumber the mesh for speedup"
+renumberMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Copy 0.orig to 0"
+cp -r 0.orig 0
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Start simulation (approximately 5-10min)"
+foamRun > logSimulation
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Simulation ended\n\n"
+
+
+#------------------------------------------------------------------------------

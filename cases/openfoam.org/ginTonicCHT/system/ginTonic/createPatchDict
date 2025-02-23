@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  9                                     |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -22,9 +22,8 @@ pointSync false;
 // Patches to create.
 patches
 (
-    //- region1 is the surrounding air that we do not consider
-    //  type patch based on the numerical system; closed domain will
-    //  blow up; therefore inlet/outlet - not 100 percentage physical but
+    //- The air domain is the surrounding domain that we do not consider.
+    //  therefore inlet/outlet - not 100 percentage physical but
     //  for demonstration okay
     {
         name            top;
@@ -34,7 +33,7 @@ patches
         }
 
         constructFrom patches;
-        patches (ginTonic_to_region1);
+        patches (ginTonic_to_air);
     }
 
     //- glass we do not consider either -> wall

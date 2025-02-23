@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  9                                     |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -14,7 +14,9 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     pimpleFoam;
+application     foamRun;
+
+solver          incompressibleFluid;
 
 startFrom       latestTime;
 
@@ -32,7 +34,7 @@ writeInterval   0.02;
 
 purgeWrite      0;
 
-writeFormat     ascii;
+writeFormat     binary;
 
 writePrecision  6;
 
@@ -48,6 +50,7 @@ adjustTimeStep yes;
 
 maxCo           3.5;
 
+/*
 libs
 (
     "libsolverFunctionObjects.so"
@@ -60,6 +63,7 @@ functions
         type            scalarTransport;
         writeInterval   outputTime;
         field           S;
+        diffusivity     constant;
         D               0;
         schemesField    S;
         nCorr           3;
@@ -68,5 +72,6 @@ functions
 
     #includeFunc residuals
 }
+*/
 
 // ************************************************************************* //

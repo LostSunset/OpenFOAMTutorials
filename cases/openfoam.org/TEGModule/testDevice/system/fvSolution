@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-|  \\    /   O peration     | Version:  9                                     |
-    \\  /    A nd           | Version:  dev
-     \\/     M anipulation  |
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
+|    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -22,12 +22,18 @@ solvers
         solver          PCG;
         preconditioner  DIC;
         tolerance       1e-10;
-        relTol          0;
+        relTol          0.1;
         minIter         1;
+    }
+
+    TFinal
+    {
+        $T;
+        relTol          0;
     }
 }
 
-SIMPLE
+PIMPLE
 {
     nNonOrthogonalCorrectors 1;
 }

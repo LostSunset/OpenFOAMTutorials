@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  10 September 2021                  #
+# Updated on:  27 Oktober 2024                    #
 #-------------------------------------------------#
 # Topic:       Multiregion meshing                #
-# OpenFOAM:    version 9 (Foundation)             #
+# OpenFOAM:    version 12 (Foundation)            #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-9"
+foamVersion="OpenFOAM-12"
 
 
 #------------------------------------------------------------------------------
@@ -33,6 +33,7 @@ Start meshing
 
 #-------------------------------------------------------------------------------
 echo -e "   - Convert original featureEdges to eMesh"
+echo -e "     This eMesh can be created by using surfaceFeature application"
 surfaceFeatureConvert constant/triSurface/featureEdgesStandard.obj \
     constant/triSurface/featureEdges.eMesh > logFileFeatureEdges
 
@@ -119,6 +120,11 @@ mkdir -p 3
 mv 0/* 3/
 cp -r con*/polyMesh 3/polyMesh
 rm -r con*/polyMesh
+
+
+#-------------------------------------------------------------------------------
+echo -e "   - Recreate the background mesh for paraview"
+ideasUnvToFoam cad/backgroundMesh.unv >> logFileLevels
 
 
 #-------------------------------------------------------------------------------
