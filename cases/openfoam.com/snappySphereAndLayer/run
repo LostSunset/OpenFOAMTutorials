@@ -1,0 +1,65 @@
+#!/bin/bash
+#
+#-------------------------------------------------#
+# Contributor: Tobias Holzmann                    #
+# Updated on:  14 Februar 2022                    #
+#-------------------------------------------------#
+# Topic:       Sphere meshing with layers         #
+# OpenFOAM:    version v2112 (Foundation)             #
+#-------------------------------------------------#
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
+#-------------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+foamVersion="OpenFOAM-v2112"
+
+
+#------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+source clean
+source .color
+source .preamble
+
+
+#-------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+
+
+#-------------------------------------------------------------------------------
+echo -e "   - Create STL files"
+cat cad/stlChannel/* > constant/triSurface/channel.stl
+cp cad/stlSphere/sphere.stl constant/triSurface/sphere.stl
+
+
+#-------------------------------------------------------------------------------
+echo -e "   - Create background mesh"
+ideasUnvToFoam cad/backgroundMesh.unv > logFile
+
+
+#-------------------------------------------------------------------------------
+echo -e "   - Create feature edges"
+surfaceFeatureExtract >> logFile
+
+
+#-------------------------------------------------------------------------------
+echo -e "   - Meshing the fluid domain with snappyHexMesh"
+echo -e "     + castellated (refinement and cut out the sphere)"
+echo -e "     + snapping"
+echo -e "     + layer generation (100 %)"
+snappyHexMesh >> logFile
+
+
+#-------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n\n
+"
+
+
+#-------------------------------------------------------------------------------

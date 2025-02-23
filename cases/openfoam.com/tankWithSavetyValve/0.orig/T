@@ -1,0 +1,57 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2112                                 |
+|   \\  /    A nd           | Website:                                        |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      T;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 293;
+
+boundaryField
+{
+    outlet
+    {
+        type            inletOutlet;
+        inletValue      uniform 293;
+        value           uniform 293;
+    }
+
+    wall
+    {
+        type            zeroGradient;
+    }
+
+    cyclic
+    {
+        type            cyclic;
+    }
+
+    tankBottom
+    {
+        type            externalWallHeatFluxTemperature;
+        mode            power;
+        Q               table
+        (
+            (0      0)
+            (5      150)
+            (10     280)
+            (12     50)
+        );
+        kappaMethod     fluidThermo;
+        value           uniform 293;
+    }
+}
+
+
+// ************************************************************************* //

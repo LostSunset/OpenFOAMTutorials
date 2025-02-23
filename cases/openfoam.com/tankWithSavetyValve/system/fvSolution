@@ -1,0 +1,91 @@
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /   F ield        | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2112                                 |
+|   \\  /    A nd           | Website:                                        |
+|    \\/      M anipulation |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version         2012;
+    format          ascii;
+    class           dictionary;
+    location        "system";
+    object          fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    "rho.*"
+    {
+        solver          PCG;
+        preconditioner  FDIC;
+        tolerance       0;
+        relTol          0;
+    }
+
+    p_rgh
+    {
+        solver          PCG;
+        preconditioner  FDIC
+        smoother  	FDIC;
+        tolerance       1e-6;
+        relTol          0.1;
+    }
+
+    p_rghFinal
+    {
+        $p_rgh;
+        relTol          0;
+    }
+
+    "(U|h|e|k|omega|R|Yi)"
+    {
+        solver          PBiCGStab;
+        preconditioner  DILU;
+        tolerance       1e-5;
+        relTol          0.1;
+    }
+
+    "(U|h|e|k|omega|R|Yi)Final"
+    {
+        $U;
+        relTol          0.0;
+    }
+}
+
+PIMPLE
+{
+    correctPhi          false;
+    momentumPredictor   false;
+    turbOnFinalIterOnly true;
+    consistent          true;
+    nNonOrthogonalCorrectors 0;
+    nOuterCorrectors    1;
+    nCorrectors         2;
+
+	pRefCell 0;
+	pRefValue	101325;
+}
+
+relaxationFactors
+{
+    fields
+    {
+        p_rgh           0.3;
+        p_rghFinal        1;
+    }
+
+    equations
+    {
+        "(k|omega|U|Yi)"           0.3;
+        "(k|omega|U|Yi)Final"      1;
+
+        h               0.3;
+        hFinal          1;
+    }
+}
+
+
+// ************************************************************************* //

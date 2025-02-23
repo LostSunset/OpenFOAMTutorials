@@ -1,0 +1,111 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2112                                 |
+|   \\  /    A nd           | Website:                                        |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      p_rgh;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [1 -1 -2 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    inletOutlet
+    {
+        type            fixedFluxPressure;
+        value           uniform 0;
+    }
+
+    inletOutletWall
+    {
+        type            fixedFluxPressure;
+        value           uniform 0;
+    }
+
+    inletOutlet2
+    {
+        type            totalPressure;
+        p0              uniform 0;
+        value           uniform 0;
+    }
+
+    inletOutletWall2
+    {
+        type            fixedFluxPressure;
+        value           uniform 0;
+    }
+
+    tankTop
+    {
+        type            fixedFluxPressure;
+        value           uniform 0;
+    }
+
+    tank
+    {
+        type            fixedFluxPressure;
+        value           uniform 0;
+    }
+
+    tankBottom
+    {
+        type            fixedFluxPressure;
+        value           uniform 0;
+    }
+
+    hopper
+    {
+        type            fixedFluxPressure;
+        value           uniform 0;
+    }
+
+    pipeSystem
+    {
+        type            fixedFluxPressure;
+        value           uniform 0;
+    }
+
+    // In former versions, we changed the BC by using changeDictionary and
+    // made two interFoam runs:
+    // Run1 - filling without having jump active
+    // Run2 - filling + jump
+    // This BC combines both and do start the jump at 3.001
+    baffle_master
+    {
+        type            uniformJump;
+        patchType       cyclic;
+        value           uniform 0;
+        jumpTable
+        {
+            type        table;
+            values
+            (
+                (0      0)
+                (2.5    0)
+                (3.1    4500)
+                (20     4500)
+                (20.1   0)
+                (10000  0)
+            );
+        }
+    }
+
+    baffle_slave
+    {
+        type            uniformJump;
+        patchType       cyclic;
+        value           uniform 0;
+    }
+}
+
+// ************************************************************************* //

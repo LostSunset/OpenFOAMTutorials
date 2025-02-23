@@ -1,0 +1,120 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2112                                 |
+|   \\  /    A nd           | Website:                                        |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    inletOutlet
+    {
+        type            uniformFixedValue;
+        value           uniform (0 0 0);
+        uniformValue
+        {
+            // The values between the times are linear interpolated
+            // Ramp linearly between 0s < t < 2s
+            // Ramp linearly between 20s < t < 20.1
+            type        table;
+            values
+            (
+                (0  (0 0 0))
+                (2  (0 -2.5 0))
+                (20 (0 -2.5 0))
+                (20.1 (0 2 0))
+                (100000 (0 2 0))
+            );
+        }
+
+        // Alternative using codedFixedValue
+        // This snippet was used in all Foundation versions up to v9 and in
+        // the ESI-OpenCFD v2106. However, the uniformFixedValue provides
+        // an easier implementation
+        /*
+        type            codedFixedValue;
+        name            inlet;
+        value           uniform (0 0 0);
+
+        code
+        #{
+            const scalar t = this->db().time().value();
+
+            vector fU = vector(0,-2.5,0);
+
+            if (t < 2)
+            {
+                fU *= t;
+            }
+
+            operator==(fU);
+        #};
+        */
+    }
+
+    inletOutletWall
+    {
+        type            noSlip;
+    }
+
+    inletOutlet2
+    {
+        type            pressureInletOutletVelocity;
+        value           uniform (0 0 0);
+    }
+
+    inletOutletWall2
+    {
+        type            noSlip;
+    }
+
+    tankTop
+    {
+        type            noSlip;
+    }
+
+    tank
+    {
+        type            noSlip;
+    }
+
+    tankBottom
+    {
+        type            noSlip;
+    }
+
+    hopper
+    {
+        type            noSlip;
+    }
+
+    pipeSystem
+    {
+        type            noSlip;
+    }
+
+    baffle_master
+    {
+        type            cyclic;
+    }
+
+    baffle_slave
+    {
+        type            cyclic;
+    }
+}
+
+// ************************************************************************* //

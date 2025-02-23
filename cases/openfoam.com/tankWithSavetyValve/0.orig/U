@@ -1,0 +1,64 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2112                                 |
+|   \\  /    A nd           | Website:                                        |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    location    "0";
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    outlet
+    {
+        type            inletOutlet;
+        inletValue      uniform (0 0 0);
+        value           uniform (0 0 0);
+    }
+
+    wall
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+
+    cyclic
+    {
+        type            cyclic;
+    }
+
+    blockedRaptureDiscBaffle
+    {
+        type            activePressureForceBaffleVelocity;
+
+        // This is the name of the cyclic patch
+        cyclicPatch     raptureDisc_master;
+        openingTime     0.01;
+        maxOpenFractionDelta 0.01;
+        openFraction    0;
+
+        // This value is the opening or closing guy
+        // Please see ISSUE 2360 - Bug in condition
+        // https://develop.openfoam.com/Development/openfoam/-/issues/2360
+        // -> if you dont have the patch installed, the BC will open at 3000 Pa
+        minThresholdValue 1500;
+        forceBased      false;
+        opening         1;
+        value           uniform (0 0 0);
+    }
+}
+
+
+// ************************************************************************* //

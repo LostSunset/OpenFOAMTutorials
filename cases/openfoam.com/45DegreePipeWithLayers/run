@@ -1,0 +1,74 @@
+#!/bin/bash
+#
+#-------------------------------------------------#
+# Contributor: Tobias Holzmann                    #
+# Updated on:  28 Februar 2022                    #
+#-------------------------------------------------#
+# Topic:       Meshing a pipe (45 degree)         #
+# OpenFOAM:    version v2112 (Foundation)             #
+#-------------------------------------------------#
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
+#-------------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+foamVersion="OpenFOAM-v2112"
+
+
+#------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+source clean
+source .color
+source .preamble
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create feature edges"
+surfaceFeatureExtract >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create background mesh"
+ideasUnvToFoam cad/backgroundMesh.unv >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Scale background mesh"
+transformPoints -scale "(1000 1000 1000)" >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Meshing with snappyHexMesh"
+snappyHexMesh >> logMeshing
+
+
+#------------------------------------------------------------------------------
+#echo -e "   - Scale the meshed geometry back"
+#transformPoints -scale "(1e-3 1e-3 1e-3)" >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Note 99.5% layers are generated. Changing the layer settings can"
+echo -e "     result in a 100% of layer generation. Problem here is the outlet"
+echo -e "     that causes tiny problems due to the fact that the mesh is "
+echo -e "     built under 45°. A 90° pipe will have 100% without changing the"
+echo -e "     layerControl parameters."
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n\n
+"
+
+
+#------------------------------------------------------------------------------

@@ -1,0 +1,123 @@
+#!/bin/bash
+#
+#-------------------------------------------------#
+# Contributor: Tobias Holzmann                    #
+# Updated on:  05 Februar 2022                    #
+#-------------------------------------------------#
+# Topic:       2D AMI generation using baffles    #
+# OpenFOAM:    version v2112 (Foundation)             #
+#-------------------------------------------------#
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
+#-------------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+foamVersion="OpenFOAM-v2112"
+
+
+#------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+source clean
+source .color
+source .preamble
+
+
+#------------------------------------------------------------------------------
+if [ -f cad/backgroundMesh.unv ];
+then
+    echo "   - Background mesh exist, proceed..."
+else
+    echo "   - No background mesh exist, please create one'"
+    echo ""
+    exit
+fi
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create background mesh"
+ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Meshing with snappyHexMesh (~ 80 seconds)"
+cp system/snappyHexMeshDict.meshing system/snappyHexMeshDict
+snappyHexMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Change the patch type to empty of front and empty"
+changeDictionary >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Flatten front and back site"
+flattenMesh >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Build a 2D mesh"
+extrudeMesh >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Cleaning"
+rm constant/polyMesh/*Zones constant/polyMesh/*Level* constant/polyMesh/level* \
+    0 -rf
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Building the cellZones in 2D (setSet or topoSet also possible)"
+cp system/snappyHexMeshDict.cellZone system/snappyHexMeshDict
+snappyHexMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create Baffles for AMI and the pipe wall"
+createBaffles -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Split baffles"
+mergeOrSplitBaffles -split -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n
+"
+
+#------------------------------------------------------------------------------
+echo -e "   - Copy 0.orig to 0"
+rm -r 0
+cp -r 0.orig 0
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Start simulation"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Renumber mesh for speedup (~5-15%)"
+renumberMesh -overwrite > logSolver
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Start transient calculation (motion starts at t=4s)"
+pimpleFoam >> logSolver
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Simulation ended\n\n"
+
+
+#------------------------------------------------------------------------------

@@ -1,0 +1,122 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2112                                 |
+|   \\  /    A nd           | Website:                                        |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     buoyantPimpleFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         120;
+
+deltaT          0.001;
+
+writeControl    adjustableRunTime;
+
+writeInterval   0.25;
+
+purgeWrite      0;
+
+writeFormat     binary;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+adjustTimeStep  yes;
+
+maxCo           5;
+
+functions
+{
+    // This function object is used to initialize the p_rgh and ph_rgh fields
+    // However, the ph_rgh field is not of interest and is only needed for
+    // execution. 
+    // Why do we need this guy? Simply because we have a constant p field 
+    // which is not correct (we should have variations in p based on hydrostatic
+    // parts. However, if we start with a constant p field and calculate the
+    // p_rgh field (p_rgh = p - rho*gh), we get a wrong p_rgh field in the first
+    // iteration which might destroy our solution.
+    // Especially for steady state solutions, this function is important
+    initPrgh
+    {
+        type            hydrostaticPressure;
+        libs            (initialisationFunctionObjects);
+        pRef            none;
+    }
+
+    // Track flux at inlet and outlet
+    // flux negative = inflow
+    // flux positiv = outflow
+    inletFlux
+    {
+        type            surfaceFieldValue;
+        libs            (fieldFunctionObjects);
+
+        operation       sum;
+        fields          (phi);
+        regionType      patch;
+        name            inlet;
+        log             true;
+        writeFields     false;
+    }
+    outletFlux
+    {
+        type            surfaceFieldValue;
+        libs            (fieldFunctionObjects);
+
+        operation       sum;
+        fields          (phi);
+        regionType      patch;
+        name            outlet;
+        log             true;
+        writeFields     false;
+    }
+    massInDomain
+    {
+        type            volFieldValue;
+        libs            (fieldFunctionObjects);
+
+        operation       volIntegrate;
+        fields          (rho);
+        regionType      all;
+        log             true;
+        writeFields     false;
+    }
+    averageTemperature
+    {
+        type            volFieldValue;
+        type            volFieldValue;
+        libs            (fieldFunctionObjects);
+
+        operation       volAverage;
+        fields          (T);
+        regionType      all;
+        log             true;
+        writeFields     false;
+    }
+}
+
+// ************************************************************************* //

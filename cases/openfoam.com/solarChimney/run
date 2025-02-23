@@ -1,0 +1,138 @@
+#!/bin/bash
+#
+#-------------------------------------------------#
+# Contributor: Tobias Holzmann                    #
+# Updated on:  12 Februar 2022                    #
+#-------------------------------------------------#
+# Topic:       Bouyancy driven flows              #
+# OpenFOAM:    version v2112 (Foundation)             #
+#-------------------------------------------------#
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
+#-------------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+foamVersion="OpenFOAM-v2112"
+nCores=8
+
+
+#------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+source clean
+source .color
+source .preamble
+
+
+#------------------------------------------------------------------------------
+if [ -f cad/backgroundMesh.unv ];
+then
+    echo "   - Background mesh exist, proceed..."
+else
+    echo "   - No background mesh exist, please build one"
+    echo ""
+    exit
+fi
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create background mesh"
+ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -en "   - Set number of cores: $nCores\n"
+echo -en "     - decomposeParDictMeshing: "
+foamDictionary system/decomposeParDictMeshing -entry numberOfSubdomains -set $nCores
+echo -en "     - decomposeParDictSolving: "
+foamDictionary system/decomposeParDictSolving -entry numberOfSubdomains -set $nCores
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Decompose mesh using the simple decomposition method"
+mpirun -np $nCores redistributePar -constant -decompose -overwrite -parallel \
+    -decomposeParDict system/decomposeParDictMeshing >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Meshing using snappyHexMesh (~ 60 sec)"
+time mpirun -np $nCores snappyHexMesh -overwrite -parallel \
+    -decomposeParDict system/decomposeParDictMeshing >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Cleaning"
+rm -rf 0
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Copy 0.org to processor*/0"
+echo -e "     Note: We need to include the «setConstraintTypes»"
+for i in $(seq 0 $((nCores-1)))
+do
+    # Remove already existing 0 file from meshing stage
+    rm -rf processor${i}/0
+    cp -r 0.orig processor${i}/0
+done
+
+
+#------------------------------------------------------------------------------
+if [ `which $application` ]
+then
+
+
+    #--------------------------------------------------------------------------
+    echo -e "   - Redistribute mesh using ptScotch method"
+    echo -e "     This requires the ptscotch library installed otherwise"
+    echo -e "     used the decomposeParDictMeshing file instead or install it"
+    mpirun -np $nCores redistributePar -parallel -overwrite \
+        -decomposeParDict system/decomposeParDictSolving > logSolve
+
+
+    #--------------------------------------------------------------------------
+    echo -e "   - Renumber the mesh"
+    mpirun -np $nCores renumberMesh -overwrite -parallel >> logSolve
+
+
+    #--------------------------------------------------------------------------
+    echo -e "   - Start simulation (this will take a couple of hours)"
+    mpirun -np $nCores $application -parallel >> logSolve
+
+
+    #--------------------------------------------------------------------------
+    echo -e "   - Create plots"
+    gnuplot visualization/plotGraphs
+
+
+    #--------------------------------------------------------------------------
+else
+
+    #--------------------------------------------------------------------------
+    echo -en "   - Can not start simulation, '${RED}${application}$NC'"
+    echo -e " not available"
+
+
+    #--------------------------------------------------------------------------
+fi
+
+
+#------------------------------------------------------------------------------
+echo -e "   - End\n\n"
+
+
+#------------------------------------------------------------------------------

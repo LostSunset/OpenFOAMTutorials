@@ -1,0 +1,113 @@
+#!/bin/bash
+#
+#-------------------------------------------------#
+# Contributor: Tobias Holzmann                    #
+# Updated on:  11 Februar 2022                    #
+#-------------------------------------------------#
+# Topic:       activePressureForceBaffleVelocity  #
+# OpenFOAM:    version v2112 (Foundation)             #
+#-------------------------------------------------#
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
+#-------------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+foamVersion="OpenFOAM-v2112"
+
+
+#------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+source clean
+source .color
+source .preamble
+
+
+#------------------------------------------------------------------------------
+if [ -f cad/backgroundMesh.unv ];
+then
+    echo "   - Background mesh exist, proceed..."
+else
+    echo "   - No background mesh exist, please build one"
+    echo ""
+    exit
+fi
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create background mesh"
+ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Build geometry from single STLs"
+mkdir -p constant/triSurface
+cat cad/stl/* > constant/triSurface/regionSTL.stl
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Meshing the tank using snappyHexMesh (~ 30 seconds)"
+snappyHexMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Renumber the mesh to re-orient the surface-normals"
+echo -e "     Important step to have consistent face normals of the baffles"
+renumberMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Extract the face zone in which the rapture disc is located"
+topoSet >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Use the face zone to create 4 duplications of the internal faces"
+echo -e "     2x cyclic and 2x walls"
+createBaffles -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Merge the two walls into one patch"
+createPatch -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Delete the 0 folder (includes some-non-needed stuff)"
+rm -rf 0
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Copy 0.orig folder"
+cp -r 0.orig 0
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Decompose case"
+decomposePar >> logSimulation
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Starting the calculation"
+mpirun -np 4 buoyantPimpleFoam -parallel >> logSimulation
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Safety disc opens and safed lifes... simulation done..."
+
+#------------------------------------------------------------------------------

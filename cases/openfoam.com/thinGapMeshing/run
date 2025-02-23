@@ -1,0 +1,86 @@
+#!/bin/bash
+#
+#-------------------------------------------------#
+# Contributor: Tobias Holzmann                    #
+# Updated on:  14 Februar 2022                    #
+#-------------------------------------------------#
+# Topic:       Thin Gap Meshing                   #
+# OpenFOAM:    version v2112 (Foundation)             #
+#-------------------------------------------------#
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
+#-------------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+foamVersion="OpenFOAM-v2112"
+
+
+#------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+source clean
+source .color
+source .preamble
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create background mesh"
+ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Scale background mesh and triSurfaces"
+echo -e "     This is a trick to avoid triggering some mesh-quality constraints"
+echo -e "     However, its not always the best way"
+transformPoints -scale "(10000 10000 10000)" >> logMeshing
+
+surfaceTransformPoints -scale "(10000 10000 10000)" \
+    constant/triSurface/regionSTL.orig.stl \
+    constant/triSurface/regionSTL.stl >> logMeshing
+
+surfaceTransformPoints -scale "(10000 10000 10000)" \
+    constant/triSurface/specialGapRefinement.orig.stl \
+    constant/triSurface/specialGapRefinement.stl >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Meshing with snappyHexMesh (~ 4 minutes)"
+snappyHexMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Transform mesh back to original size"
+transformPoints -scale "(0.0001 0.0001 0.0001)"  >> logFile
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Copy 0.org to 0"
+rm -r 0
+cp -r 0.orig 0
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Start simulation (approximately 7 minutes)"
+simpleFoam > logSolver
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Simulation ended\n\n"
+
+
+#------------------------------------------------------------------------------

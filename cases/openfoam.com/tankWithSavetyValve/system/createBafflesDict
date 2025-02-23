@@ -1,0 +1,78 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /   F ield        | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2112                                 |
+|   \\  /    A nd           | Website:                                        |
+|    \\/      M anipulation |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version         2012;
+    format          ascii;
+    class           dictionary;
+    location        "system";
+    object          createBafflesDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+internalFacesOnly true;
+
+noFields        false;
+
+baffles
+{
+    // Here we use the previous created faceSet to create 4 times the same
+    // faces which are moved to different boundary conditions
+    // The reason for that is that the activePressureForceBaffle needs
+    // a) a cyclic boundary set (master/slave)
+    // b) an additional wall
+    quadruplicateTheInternalFaces
+    {
+        type            faceZone;
+        zoneName        raptureDiscFaceZone;
+        patches
+        {
+            // a) Create the cyclic guys (RD = raptureDisc)
+            RD_master_cyclic
+            {
+                name            raptureDisc_master;
+                type            cyclic;
+                sampleMode      nearestPatchFace;
+                neighbourPatch  raptureDisc_slave;
+                sameGroup       off;
+                patchFields
+                {
+                }
+            }
+
+            RD_slave_cyclic
+            {
+                name            raptureDisc_slave;
+                type            cyclic;
+                sampleMode      nearestPatchFace;
+                neighbourPatch  raptureDisc_master;
+                sameGroup       off;
+                patchFields
+                {
+                }
+            }
+
+            // b) create another set of walls (will be merged in the next step)
+            RD_master_wall
+            {
+                name            raptureDiscWall1;
+                type            wall;
+            }
+            RD_slave_wall
+            {
+                name            raptureDiscWall2;
+                type            wall;
+            }
+
+        }
+    }
+}
+
+
+// ************************************************************************* //

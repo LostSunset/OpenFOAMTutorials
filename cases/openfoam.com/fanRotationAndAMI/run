@@ -1,0 +1,86 @@
+#!/bin/bash
+#
+#-------------------------------------------------#
+# Contributor: Tobias Holzmann                    #
+# Updated on:  16 Februar 2022                    #
+#-------------------------------------------------#
+# Topic:       AMI FAN Tutorial and SnappyHexMesh #
+# OpenFOAM:    version v2112 (Foundation)             #
+#-------------------------------------------------#
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
+#-------------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+foamVersion="OpenFOAM-v2112"
+
+
+#------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+source clean
+source .color
+source .preamble
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create background mesh"
+ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Meshing with snappyHexMesh (~ 120 seconds)"
+snappyHexMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create Baffles"
+createBaffles -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Split Baffles to allow sliding. If this step is not done, the"
+echo -e "     moving and static mesh part are still connected"
+mergeOrSplitBaffles -split -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Renumber the mesh for optimizing the matrix"
+renumberMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Copy 0.orig to 0"
+cp -r 0.orig 0
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Decompose the case"
+decomposePar > logSimulation
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Start simulation (approximately 20h)"
+mpirun -np 4 pimpleFoam -parallel >> logSimulation
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Simulation ended\n\n"
+
+
+#------------------------------------------------------------------------------

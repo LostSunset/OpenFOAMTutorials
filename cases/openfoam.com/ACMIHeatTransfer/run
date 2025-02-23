@@ -1,0 +1,126 @@
+#!/bin/bash
+#
+#-------------------------------------------------#
+# Contributor: Tobias Holzmann                    #
+# Updated on:  10 Februar 2022                    #
+#-------------------------------------------------#
+# Topic:       ACMI Tutorial and snappyHexMesh    #
+# OpenFOAM:    version v2112 (Foundation)             #
+#-------------------------------------------------#
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
+#-------------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+foamVersion="OpenFOAM-v2112"
+
+
+#------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+source clean
+source .color
+source .preamble
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create background mesh"
+ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Extract feature edges"
+surfaceFeatureExtract >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Meshing with snappyHexMesh (~ 20 seconds)"
+snappyHexMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Extrude one patch to make a 2D mesh"
+flattenMesh >> logMeshing
+extrudeMesh >> logMeshing
+rm -rf 0 constant/polyMesh/*Level
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Merge baffle + interface, and remove not necessary boundaries"
+cp system/createPatchDict.first system/createPatchDict
+createPatch -overwrite  >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Using interface patches to create faceSets and using the"
+echo -e "     the faceSets to create faceZones (correct orientation and faces)"
+echo -e "     In addition we create the moving cellZone (for motion)"
+topoSet >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create ACMI interfaces using the faceZones"
+rm -rf 0
+createBaffles -overwrite >> logMeshing 2>&1
+
+#------------------------------------------------------------------------------
+echo -e "   - Remove zero-face entries in boundary file"
+cp system/createPatchDict.second system/createPatchDict
+createPatch -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Renumber the mesh for speedup"
+renumberMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Copy 0.orig to 0"
+cp -r 0.orig 0
+
+
+#------------------------------------------------------------------------------
+if [ `which laplacianDyMFoam` ]
+then
+    echo -e "   - Start simulation (approximately 5-10min)"
+    laplacianDyMFoam > logSimulation
+else
+    echo -e "   - Can not start simulation, 'laplacianDyMFoam' not available"
+    echo -e "   - Available on https://github.com/shor-ty/laplaciandymfoam"
+    echo -e "================================================================="
+    echo -e "   - Starting getting the application..."
+    git clone https://github.com/shor-ty/laplaciandymfoam > logGitClone 2>&1
+    cd laplaciandymfoam
+    echo -e "   - Getting the correct branch"
+    git checkout OpenFOAM-v2112 > logChangeBranch 2>&1
+    echo -e "   - Compile the application"
+    wmake > logWmake 2>&1
+    cd ..
+    echo -e "================================================================="
+    echo -e "\n"
+    echo -e "   - Start simulation (approximately 5-10min)"
+    laplacianDyMFoam > logSimulation
+
+fi
+
+
+#------------------------------------------------------------------------------
+echo -e "\nEnd\n\n"
+
+
+#------------------------------------------------------------------------------

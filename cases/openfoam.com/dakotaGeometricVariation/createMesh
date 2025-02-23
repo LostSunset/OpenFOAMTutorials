@@ -1,0 +1,79 @@
+#!/bin/bash
+#
+#-------------------------------------------------#
+# Contributor: Tobias Holzmann                    #
+# Updated on:  30 October 2018                    #
+#-------------------------------------------------#
+# Topic:       DAKOTA coupling with OpenFOAM      #
+# OpenFOAM:    6.x                                #
+#-------------------------------------------------#
+# Website:     https://Holzmann-cfd.de            #
+# Email:       advancedMaterial@Holzmann-cfd.de   #
+#-------------------------------------------------#
+
+
+# OpenFOAM script
+#------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+rm -rf constant/polyMesh
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create mesh"
+blockMesh > logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Rotate baffles"
+source system/rotateBaffles >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Adding baffles to the mesh"
+snappyHexMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -en "   - Change type of front: "
+foamDictionary constant/polyMesh/boundary -entry entry0.front.type -set empty
+
+
+#------------------------------------------------------------------------------
+echo -en "   - Change type of back: "
+foamDictionary constant/polyMesh/boundary -entry entry0.back.type -set empty
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Flatten mesh"
+flattenMesh >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Extrude one patch to make a 2D mesh again"
+extrudeMesh  >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Remove not necessary boundarys"
+createPatch -overwrite  >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Copy 0.orig to 0"
+rm -r 0
+cp -r 0.orig 0
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Renumber the mesh"
+renumberMesh -constant -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n
+"

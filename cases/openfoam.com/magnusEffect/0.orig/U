@@ -1,0 +1,87 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2112                                 |
+|   \\  /    A nd           | Website:                                        |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    inlet 
+    {
+        type            fixedValue;
+        value           uniform (0.07 0 0);
+    }
+
+    outlet
+    {
+        type            inletOutlet;
+        value           $internalField;
+        inletValue      uniform (0 0 0);
+    }
+
+    cylinder 
+    {
+
+        type            codedFixedValue;
+        value           uniform (0 0 0);
+        name            myBC;
+
+        code
+        #{
+            const scalar time = this->db().time().value();
+            const fvPatch& boundaryPatch = patch(); 
+            const vectorField& Cf = boundaryPatch.Cf(); 
+            const scalar f = 0.05*(time-15)*(time-15);
+
+            vectorField rot(Cf.size(), vector(0,0,0));
+
+            //- Start motion of the wall after 15s
+            if (time > 15)
+            {
+                rot = f*((Cf - vector(0,0.15,0)) ^ vector(0,0,1));
+            }
+
+            const vectorField n(patch().nf());
+
+            operator==(rot); // - n*(n&rot));
+
+        #};
+    }
+
+    bottom
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+
+    top
+    {
+        type            slip;
+    }
+
+    front
+    {
+        type            empty;
+    }
+
+    back
+    {
+        type            empty;
+    }
+}
+
+// ************************************************************************* //

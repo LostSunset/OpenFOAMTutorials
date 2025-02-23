@@ -1,0 +1,47 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /   F ield        | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2112                                 |
+|   \\  /    A nd           | Website:                                        |
+|    \\/      M anipulation |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version         2012;
+    format          ascii;
+    class           dictionary;
+    location        "system";
+    object          topoSetDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+actions
+(
+    // Here we create the face set that contains all faces
+    // The coordinates of the box are derived from the raptureDisc stl
+    // This set is used to quadroplicate the internal faces using
+    // createBaffles
+    {
+        name    raptureDiscFaceSet;
+        type    faceSet;
+        action  new;
+        source  boxToFace;
+        box     (0.230 -0.02 1.04) (0.231 0.02 1.08);
+    }
+
+    // Now lets convert the face sets to a faceZone
+    {
+        name    raptureDiscFaceZone;
+        type    faceZoneSet;
+        action  new;
+        source  setToFaceZone;
+
+        sourceInfo
+        {
+            faceSet raptureDiscFaceSet;
+        }
+    }
+);
+
+
+// ************************************************************************* //
