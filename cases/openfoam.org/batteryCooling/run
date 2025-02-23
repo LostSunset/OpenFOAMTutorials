@@ -1,0 +1,102 @@
+#!/bin/bash
+#
+#-------------------------------------------------#
+# Contributor: Tobias Holzmann                    #
+# Updated on:  10 Dezember 2024                   #
+#-------------------------------------------------#
+# Topic:       Complex geometry meshing           #
+# OpenFOAM:    version 12 (Foundation)            #
+#-------------------------------------------------#
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
+#-------------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+foamVersion="OpenFOAM-12"
+
+
+#------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+source clean
+source .color
+source .preamble
+
+
+#------------------------------------------------------------------------------
+if [ -f cad/backgroundMesh.unv ];
+then
+    echo "   - Background mesh exist, proceed..."
+else
+    echo "   - No background mesh exist, please create one'"
+    echo ""
+    exit
+fi
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create background mesh"
+ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Decompose mesh to 8 cores"
+cp system/decomposeParDictHierarchical system/decomposeParDict
+decomposePar >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Meshing with snappyHexMesh (~ 5 minutes)"
+mpirun -np 8 snappyHexMesh -overwrite -parallel >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Scale the mesh down to correct size"
+mpirun -np 8 transformPoints "scale=(0.001 0.001 0.001)" -parallel >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n
+"
+
+#------------------------------------------------------------------------------
+echo -e "   - Redistribute the mesh for better proc-communication"
+cp system/decomposeParDictScotch system/decomposeParDict
+rm -rf proc*/0
+mpirun -np 8 redistributePar -overwrite -parallel >> logSolver
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Renumber mesh for speedup (~5-15%)"
+mpirun -np 8 renumberMesh -overwrite -parallel >> logSolver
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Copy 0.orig to processor*/0"
+for i in $(ls -d processor*)
+do
+    rm -r ${i}/0
+    cp -r 0.orig ${i}/0
+done
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Start steadyState calculation (1h)"
+mpirun -np 8 foamRun -parallel >> logSolver
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Simulation ended\n\n"
+
+
+#------------------------------------------------------------------------------

@@ -1,0 +1,54 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       volVectorField;
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    // Need to be included because the boundary files are copied after the
+    // decomposition was started. Thus, the boundary conditions of any field
+    // does not include special BC which are introduced when we split a mesh
+    // such as processor boundary. To avoid issues, we include the basic-
+    // generic boundary condition file
+    #includeEtc "caseDicts/setConstraintTypes"
+
+    // This is a group that includes the batteries and channel wall
+    // We can also specify single patch definition or merge them into groups
+    // and only everything with one entry
+    wall
+    {
+        type            noSlip;
+    }
+
+    inlet
+    {
+        type                flowRateInletVelocity;
+
+        // Volumetric flow rate (arbitrary)
+        // We assume 100 m^3/h
+        volumetricFlowRate  constant 0.0277;          // Arbitrary
+    }
+
+    outlet
+    {
+        type            pressureInletOutletVelocity;
+        value           uniform (0 0 0);
+    }
+}
+
+
+// ************************************************************************* //
