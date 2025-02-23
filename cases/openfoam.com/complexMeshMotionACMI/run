@@ -1,0 +1,144 @@
+#!/bin/bash
+#
+#-------------------------------------------------#
+# Contributor: Tobias Holzmann                    #
+# Updated on:  10 Februar 2025                    #
+#-------------------------------------------------#
+# Topic:       ACMI Tutorial and snappyHexMesh    #
+# OpenFOAM:    version v2412 (OpenCFD/ESI)        #
+#-------------------------------------------------#
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
+#-------------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+foamVersion="OpenFOAM-v2412"
+
+
+#------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+source clean
+source .color
+source .preamble
+
+
+#------------------------------------------------------------------------------
+if [ -f cad/backgroundMesh.unv ];
+then
+    echo "   - Background mesh exist, proceed..."
+else
+    echo "   - No background mesh exist, create one using the ACMI.py file"
+    echo ""
+    exit
+fi
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create background mesh"
+ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Extract feature edges"
+surfaceFeatureExtract >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Meshing with snappyHexMesh (~ 20 seconds)"
+snappyHexMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Update front|back patch types -> from wall -> empty"
+foamDictionary constant/polyMesh/boundary -entry entry0.front.type -set empty \
+    >> logMeshing
+foamDictionary constant/polyMesh/boundary -entry entry0.back.type -set empty \
+    >> logMeshing
+foamDictionary constant/polyMesh/boundary -entry entry0.front.inGroups -remove
+foamDictionary constant/polyMesh/boundary -entry entry0.back.inGroups -remove
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Flatten the mesh for extrusion"
+flattenMesh >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Extrude one patch to make a 2D mesh"
+extrudeMesh >> logMeshing
+rm -rf 0 constant/polyMesh/*Level
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Merge baffle + interface, and remove not necessary boundaries"
+cp system/createPatchDict.first system/createPatchDict
+createPatch -overwrite  >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Using interface patches to create faceSets and using the"
+echo -e "     the faceSets to create faceZones (correct orientation and faces)"
+echo -e "     In addition we create the moving cellZone (for motion)"
+topoSet >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create ACMI interfaces using the faceZones"
+rm -rf 0
+createBaffles -overwrite >> logMeshing 2>&1
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create faceSet that only contains the boundary faces that moves"
+topoSet -dict system/topoSetDictMovingFaces >> logMeshing 2>&1
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Remove zero-face entries in boundary file and create new patch"
+echo -e "     that only includes the moving faces"
+cp system/createPatchDict.second system/createPatchDict
+createPatch -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Renumber the mesh for speedup"
+renumberMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Copy 0.orig to 0"
+cp -r 0.orig 0
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Note: For the passive scalar to work for the Foundation version"
+echo -e "     You need at least the commit: 987d5906"
+echo -e "     For stable release v9 the scalar tranport is deactivated"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Start simulation (approximately 2-3h)"
+pimpleFoam > logSimulation
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Simulation ended\n\n"
+
+
+#------------------------------------------------------------------------------
