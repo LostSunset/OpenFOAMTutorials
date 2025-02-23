@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  7.x                                   |
+|  \\    /   O peration     | Version:  8                                     |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -19,10 +19,10 @@ thermoType
     type            heSolidThermo;
     mixture         pureMixture;
     transport       constIso;
-    thermo          hConst;
+    thermo          eConst;
     equationOfState rhoConst;
     specie          specie;
-    energy          sensibleEnthalpy;
+    energy          sensibleInternalEnergy;
 }
 
 mixture
@@ -42,7 +42,7 @@ mixture
     thermodynamics
     {
         Hf      0;
-        Cp      744;
+        Cv      744;        // assumption cv = cp
     }
 
     equationOfState

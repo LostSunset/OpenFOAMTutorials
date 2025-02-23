@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  22 April 2020                      #
+# Updated on:  31 Juli 2020                       #
 #-------------------------------------------------#
 # Topic:       Thin Gap Meshing                   #
-# OpenFOAM:    7.x                                #
+# OpenFOAM:    version 8 (Foundation)             #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-7.x"
+foamVersion="OpenFOAM-8"
 
 
 #------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ surfaceTransformPoints -scale "(10000 10000 10000)" \
 
 
 #------------------------------------------------------------------------------
-echo -e "   - Meshing with snappyHexMesh (~ 4 minutes)"
+echo -e "   - Meshing with snappyHexMesh (~ 2 minutes)"
 snappyHexMesh -overwrite >> logMeshing
 
 
@@ -73,7 +73,7 @@ cp -r 0.orig 0
 
 
 #------------------------------------------------------------------------------
-echo -e "   - Start simulation (approximately 7 minutes)"
+echo -e "   - Start simulation (approximately 2 minutes)"
 simpleFoam > logSolver
 
 

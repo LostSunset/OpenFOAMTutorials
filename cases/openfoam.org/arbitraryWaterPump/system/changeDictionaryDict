@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  6.x                                   |
+|  \\    /   O peration     | Version:  8                                     |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -20,17 +20,16 @@ p_rgh
     {
         baffle_master
         {
-            type            fan;
+            type            fixedJump;
             patchType       cyclic;
             value           uniform 0;
 
-            jump            uniform 0;
-            jumpTable       constant 4500;
+            jump            uniform 4500;
         }
 
         baffle_slave
         {
-            type            fan;
+            type            fixedJump;
             patchType       cyclic;
             value           uniform 0;
         }

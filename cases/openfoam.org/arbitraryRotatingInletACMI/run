@@ -2,18 +2,18 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  15 December 2018                   #
+# Updated on:  31 Juli 2020                       #
 #-------------------------------------------------#
 # Topic:       Simple ACMI tutorial               #
-# OpenFOAM:    6.x                                #
+# OpenFOAM:    version 8 (Foundation)             #
 #-------------------------------------------------#
-# Website:     https://Holzmann-cfd.de            #
-# Email:       Tobias.Holzmann@Holzmann-cfd.de    #
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
 #-------------------------------------------------#
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-6.x"
+foamVersion="OpenFOAM-8"
 
 
 #------------------------------------------------------------------------------

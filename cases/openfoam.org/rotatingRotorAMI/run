@@ -1,0 +1,107 @@
+#!/bin/bash
+#
+#-------------------------------------------------#
+# Contributor: Tobias Holzmann                    #
+# Updated on:  31 Juli 2020                       #
+#-------------------------------------------------#
+# Topic:       Generate a AMI mesh using sHM      #
+# OpenFOAM:    version 8 (Foundation)             #
+#-------------------------------------------------#
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
+#-------------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+foamVersion="OpenFOAM-8"
+
+
+#------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+source clean
+source .color
+source .preamble
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create background mesh"
+ideasUnvToFoam cad/backgroundMesh.unv >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Meshing with snappyHexMesh (approx 2 minutes)"
+snappyHexMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Update AMI patch infos / also 'changeDict' could be used"
+createPatch -overwrite >> logMeshing
+rm -rf 0
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+Start simulation\n
+-------------------------------------------------------------------------------
+"
+
+
+#------------------------------------------------------------------------------
+read -p "   - Calculate simulation (1) or just move the mesh (2): " input
+
+
+#------------------------------------------------------------------------------
+echo "   - Calculate simulation"
+if [ $input -eq 1 ]
+then
+    echo "   - Change timestep and save interval"
+    sed 's/deltaT.*/deltaT 0.0001;/g' system/controlDict -i
+    sed 's/writeInterval.*/writeInterval 0.1;/g' system/controlDict -i
+
+    echo "   - Copy 0.orig to 0"
+    cp -r 0.orig 0
+
+    echo "   - Renumber the mesh for speedup"
+    renumberMesh -overwrite > logSimulation
+
+    echo "   - Start simulation (pimpleFoam)"
+    pimpleFoam >> logSimulation
+fi
+
+
+#------------------------------------------------------------------------------
+echo "   - Move the mesh using the solver: moveDynamicMesh"
+if [ $input -eq 2 ]
+then
+    echo "   - Change timestep and save interval"
+    sed 's/deltaT.*/deltaT 1;/g' system/controlDict -i
+    sed 's/writeInterval.*/writeInterval 1;/g' system/controlDict -i
+
+    echo "   - Start moving the mesh (moveDynamicMesh)"
+    moveDynamicMesh > logSimulation
+fi
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End of moving\n\n
+"
+
+
+#------------------------------------------------------------------------------

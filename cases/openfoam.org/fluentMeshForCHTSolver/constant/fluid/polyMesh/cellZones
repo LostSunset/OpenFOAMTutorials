@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-|  \\    /   O peration     | Version:  6.x                                   |
-    \\  /    A nd           | Version:  dev
+|  \\    /   O peration     | Version:  8                                     |
+    \\  /    A nd           | Version:  8
      \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -20,7 +20,7 @@ FoamFile
 solid
 {
     type cellZone;
-cellLabels      0();
+cellLabels      List<label> 0();
 }
 
 fluid

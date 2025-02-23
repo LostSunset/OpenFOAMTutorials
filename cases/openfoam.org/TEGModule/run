@@ -1,0 +1,107 @@
+#!/bin/bash
+#
+#-------------------------------------------------#
+# Contributor: Tobias Holzmann                    #
+# Updated on:  31 Juli 2020                       #
+#-------------------------------------------------#
+# Topic:       Heat Transfer                      #
+# OpenFOAM:    version 8 (Foundation)             #
+#-------------------------------------------------#
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
+#-------------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+foamVersion="OpenFOAM-8"
+case="testDevice"
+
+
+#------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+source clean
+source .color
+source .preamble
+
+
+#------------------------------------------------------------------------------
+if [ -f $case/cad/backgroundMesh.unv ];
+then
+    echo "   - Background mesh exist, proceed..."
+else
+    echo "   - No background mesh exist, please build one"
+    echo ""
+    exit
+fi
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create background mesh"
+ideasUnvToFoam $case/cad/backgroundMesh.unv -case $case > logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Meshing using snappyHexMesh (~ 3 minute)"
+snappyHexMesh -case $case -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Copy 0.org to 0"
+rm -rf $case/0
+cp -r $case/0.orig $case/0
+
+
+#------------------------------------------------------------------------------
+if [ `which TEGFoam` ]
+then
+
+    #--------------------------------------------------------------------------
+    echo -e "   - Decompose the mesh"
+    decomposePar -force -case $case > logSolve
+
+
+    #--------------------------------------------------------------------------
+    echo -e "   - Renumber the mesh / important for big meshes -> speed-up"
+    mpirun -np 4 renumberMesh -overwrite -parallel -case $case >> logSolve
+
+
+    #--------------------------------------------------------------------------
+    echo -e "   - Start simulation"
+    echo -e "   - Note: To start the other simulation, change the case in the"
+    echo -e "     run script you executed"
+    mpirun -np 4 TEGFoam -parallel -case $case  >> logSolve
+
+
+    #--------------------------------------------------------------------------
+else
+
+    #--------------------------------------------------------------------------
+    echo -en "   - Can not start simulation, '${ORANGE}TEGFoam$NC'"
+    echo -e " not available"
+    echo -e "     You have to compile the application first"
+
+
+    #--------------------------------------------------------------------------
+fi
+
+
+#------------------------------------------------------------------------------
+echo -e "   - End\n\n"
+
+
+#------------------------------------------------------------------------------

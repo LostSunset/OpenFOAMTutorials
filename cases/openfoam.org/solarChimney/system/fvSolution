@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  7.x                                   |
+|  \\    /   O peration     | Version:  8                                     |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -120,7 +120,7 @@ relaxationFactors
     //  Range [0-1] while 0 does not change the field (no sense)
     fields
     {
-        p_rgh           0.7;
+        p_rgh           0.9;
         p_rghFinal        1;
     }
     //- Relaxation of the equation:
@@ -132,8 +132,8 @@ relaxationFactors
     //          --> can be used in some cases, generally not stable
     equations
     {
-        "(k|epsilon|U)"           0.8;
-        "(k|epsilon|U)Final"      1;
+        "(k|epsilon|U|e)"           0.8;
+        "(k|epsilon|U|e)Final"      1;
     }
 }
 

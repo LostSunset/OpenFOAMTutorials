@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  22 April 2020                      #
+# Updated on:  31 Juli 2020                       #
 #-------------------------------------------------#
 # Topic:       Sneezing Simulation                #
-# OpenFOAM:    7.x                                #
+# OpenFOAM:    version 8 (Foundation)             #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-7.x"
+foamVersion="OpenFOAM-8"
 
 
 #------------------------------------------------------------------------------
@@ -80,7 +80,7 @@ decomposePar >> logSolver
 
 #------------------------------------------------------------------------------
 echo -e "   - Start the calculation (DPMFoam)"
-echo -e "     Note: Simulation performed using 30 cores in 20 h"
+echo -e "     Note: Tobias performed the simulation using 30 cores in 20 h"
 mpirun -np 4 DPMFoam -parallel >> logSolver
 
 

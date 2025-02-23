@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  6.x                                   |
+|  \\    /   O peration     | Version:  8                                     |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -47,7 +47,7 @@ runTimeModifiable true;
 
 adjustTimeStep  yes;
 
-maxCo           0.7;
+maxCo           1.7;
 
 libs
 (

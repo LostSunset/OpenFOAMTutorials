@@ -2,18 +2,18 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  14 December 2018                   #
+# Updated on:  31 Juli 2020                       #
 #-------------------------------------------------#
-# Topic:       Adaptive mesh refinement           #
-# OpenFOAM:    6.x                                #
+# Topic:       Meshing a helix                    #
+# OpenFOAM:    version 8 (Foundation)             #
 #-------------------------------------------------#
-# Website:     https://Holzmann-cfd.de            #
-# Email:       Tobias.Holzmann@Holzmann-cfd.de    #
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
 #-------------------------------------------------#
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-6.x"
+foamVersion="OpenFOAM-8"
 
 
 #------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ surfaceTransformPoints -scale "(1000 1000 1000)" con*/tri*/layer.stl \
 
 #------------------------------------------------------------------------------
 echo -e "   - Create feature edges"
-surfaceFeatureExtract >> logFile
+surfaceFeatures >> logFile
 
 
 #------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ decomposePar >> logFile
 
 #------------------------------------------------------------------------------
 echo -e "   - Castallate and snap"
-mpirun -np 2 snappyHexMesh -overwrite -parallel>> logFile
+mpirun -np 4 snappyHexMesh -overwrite -parallel>> logFile
 
 
 #------------------------------------------------------------------------------
@@ -77,7 +77,7 @@ sed '21s/.*/addLayers true;/' sys*/snappyHexMeshDict -i
 
 #------------------------------------------------------------------------------
 echo -e "   - Add layerer with snappyHexMesh (Coverage: 95,4%)"
-mpirun -np 2 snappyHexMesh -overwrite -parallel>> logFile
+mpirun -np 4 snappyHexMesh -overwrite -parallel>> logFile
 
 
 #------------------------------------------------------------------------------
@@ -109,7 +109,7 @@ surfaceTransformPoints -scale "(0.001 0.001 0.001)" con*/tri*/layer.stl \
 
 
 #------------------------------------------------------------------------------
-echo -e "   - check the mesh (get errors): "
+echo -e "   - check the mesh (get errors):\n"
 checkMesh -constant | egrep '\*[A-Z].*'
 
 

@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  7.x                                   |
+|  \\    /   O peration     | Version:  8                                     |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -32,7 +32,7 @@ divSchemes
 laplacianSchemes
 {
     default             none;
-    laplacian(alpha,h)  Gauss linear corrected;
+    laplacian(alpha,e)  Gauss linear corrected;
 }
 
 interpolationSchemes

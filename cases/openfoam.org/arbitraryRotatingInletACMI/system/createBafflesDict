@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  6.x                                   |
+|  \\    /   O peration     | Version:  8                                     |
 |   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -42,7 +42,7 @@ baffles
                 matchTolerance  0.0001;
                 neighbourPatch  ACMI2_couple;
                 nonOverlapPatch ACMI1_blockage;
-                transform       noOrdering;
+                transform       none;
             }
 
             slave // not used since we're manipulating a boundary patch
@@ -84,7 +84,7 @@ baffles
                 matchTolerance  0.0001;
                 neighbourPatch  ACMI1_couple;
                 nonOverlapPatch ACMI2_blockage;
-                transform       noOrdering;
+                transform       none;
             }
 
             slave // not used since we're manipulating a boundary patch

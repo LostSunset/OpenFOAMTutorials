@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-|  \\    /   O peration     | Version:  6.x                                   |
-    \\  /    A nd           | Version:  dev
+|  \\    /   O peration     | Version:  8                                     |
+    \\  /    A nd           | Version:  8
      \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -32,7 +32,7 @@ FoamFile
     fluid_to_solid
     {
         type            mappedWall;
-        inGroups        1(wall);
+        inGroups        List<word> 1(wall);
         nFaces          12692;
         startFace       289525;
         sampleMode      nearestPatchFace;

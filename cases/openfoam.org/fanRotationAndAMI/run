@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  05 Juli 2020                       #
+# Updated on:  31 Juli 2020                       #
 #-------------------------------------------------#
 # Topic:       AMI FAN Tutorial and SnappyHexMesh #
-# OpenFOAM:    7.x                                #
+# OpenFOAM:    version 8 (Foundation)             #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-7.x"
+foamVersion="OpenFOAM-8"
 
 
 #------------------------------------------------------------------------------
@@ -39,18 +39,17 @@ ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
 #------------------------------------------------------------------------------
 echo -e "   - Meshing with snappyHexMesh (~ 120 seconds)"
 snappyHexMesh -overwrite >> logMeshing
-exit
 
 
 #------------------------------------------------------------------------------
 echo -e "   - Create Baffles"
-createBaffle -overwrite >> logMeshing
+createBaffles -overwrite >> logMeshing
 
 
 #------------------------------------------------------------------------------
 echo -e "   - Split Baffles to allow sliding. If this step is not done, the"
 echo -e "     moving and static mesh part are still connected"
-splitOrMergeBaffles -split -overwrite >> logMeshing
+mergeOrSplitBaffles -split -overwrite >> logMeshing
 
 
 #------------------------------------------------------------------------------

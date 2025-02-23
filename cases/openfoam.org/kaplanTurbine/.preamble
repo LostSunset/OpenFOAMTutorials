@@ -2,10 +2,10 @@
 #
 #----------------------------------------------#
 # Contributor: Tobias Holzmann                 #
-# Updated on:  23 December 2018                #
+# Updated on:  31 Juli 2020                    #
 #----------------------------------------------#
-# Location:    www.Holzmann-cfd.de             #
-# Email:       Tobias.Holzmann@Holzmann-cfd.de #
+# Location:    https://Holzmann-cfd.com        #
+# Email:       community@Holzmann-cfd.com      #
 #----------------------------------------------#
 
 
@@ -14,9 +14,9 @@
 echo -en "
 -------------------------------------------------------------------------------
 ${GRAY}Tutorial by Tobias Holzmann${NC} :: Generated on October 2016  
-${GRAY}Build for OpenFOAM version${NC}  :: OpenFOAM-6.x
-${GRAY}Tested on system${NC}            :: Ubuntu 18.04.1
-${GRAY}The case was updated on${NC}     :: 23 December 2018
+${GRAY}Build for OpenFOAM version${NC}  :: OpenFOAM-8
+${GRAY}Tested on system${NC}            :: Ubuntu 20.04
+${GRAY}The case was updated on${NC}     :: 31 Juli 2020
 
 
 ${GREEN}Topic: Structur motion based on fluid interaction${NC}
@@ -34,7 +34,7 @@ then
     echo -e  "  - ${GREEN}$foamVersion found...${NC}"
 
 else
-    echo -e  "  - ${RED}You are not using the correct OpenFOAM version"
+    echo -e  "  - ${ORANGE}You are not using the correct OpenFOAM version"
     echo -en "    Your version is $userFoamVersion and we need ${GREEN}"
     echo -e  "$foamVersion${NC}\n"
 
