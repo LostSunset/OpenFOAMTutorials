@@ -2,7 +2,7 @@
 #
 #----------------------------------------------#
 # Contributor: Tobias Holzmann                 #
-# Updated on:  11 Februar 2022                 #
+# Updated on:  10 Februar 2025                 #
 #----------------------------------------------#
 # Location:    https://Holzmann-cfd.com        #
 # Email:       community@Holzmann-cfd.com      #
@@ -14,9 +14,9 @@
 echo -en "
 -------------------------------------------------------------------------------
 ${GRAY}Tutorial by Tobias Holzmann${NC} :: Generated during October 2021
-${GRAY}Build for OpenFOAM version${NC}  :: OpenFOAM-v2112
-${GRAY}Tested on system${NC}            :: Ubuntu 20.04.3
-${GRAY}The case was updated on${NC}     :: 11 Februar 2022
+${GRAY}Build for OpenFOAM version${NC}  :: OpenFOAM-v2412
+${GRAY}Tested on system${NC}            :: Ubuntu 24.04.1
+${GRAY}The case was updated on${NC}     :: 10 Februar 2025
 -------------------------------------------------------------------------------
 
 

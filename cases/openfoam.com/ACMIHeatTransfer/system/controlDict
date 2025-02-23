@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  v2112                                 |
-|   \\  /    A nd           | Website:                                        |
+|  \\    /   O peration     | Website:  www.openfoam.com                      |
+|   \\  /    A nd           | Version:  v2412                                 |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -23,7 +23,7 @@ startTime       0;
 
 stopAt          endTime;
 
-endTime         2;
+endTime         0.6;
 
 deltaT          0.0001;
 

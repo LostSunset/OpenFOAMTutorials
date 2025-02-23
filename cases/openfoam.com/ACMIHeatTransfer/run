@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  10 Februar 2022                    #
+# Updated on:  10 Februar 2025                    #
 #-------------------------------------------------#
 # Topic:       ACMI Tutorial and snappyHexMesh    #
-# OpenFOAM:    version v2112 (Foundation)             #
+# OpenFOAM:    version v2412 (OpenCFD/ESI)        #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-v2112"
+foamVersion="OpenFOAM-v2412"
 
 
 #------------------------------------------------------------------------------
@@ -102,20 +102,6 @@ then
 else
     echo -e "   - Can not start simulation, 'laplacianDyMFoam' not available"
     echo -e "   - Available on https://github.com/shor-ty/laplaciandymfoam"
-    echo -e "================================================================="
-    echo -e "   - Starting getting the application..."
-    git clone https://github.com/shor-ty/laplaciandymfoam > logGitClone 2>&1
-    cd laplaciandymfoam
-    echo -e "   - Getting the correct branch"
-    git checkout OpenFOAM-v2112 > logChangeBranch 2>&1
-    echo -e "   - Compile the application"
-    wmake > logWmake 2>&1
-    cd ..
-    echo -e "================================================================="
-    echo -e "\n"
-    echo -e "   - Start simulation (approximately 5-10min)"
-    laplacianDyMFoam > logSimulation
-
 fi
 
 

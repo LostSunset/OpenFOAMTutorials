@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  v2112                                 |
-|   \\  /    A nd           | Website:                                        |
+|  \\    /   O peration     | Website:  www.openfoam.com                      |
+|   \\  /    A nd           | Version:  v2412                                 |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -23,10 +23,7 @@ internalFacesOnly false;
 // Baffles to create.
 baffles
 {
-    // NOTE: cyclicAMI patches MUST BE defined PRIOR to their associted
-    //       blockage patches
-
-    interface.stl 
+    ACMIInterface_1
     {
         //- Use predefined faceZone to select faces and orientation.
         type        faceZone;
@@ -68,7 +65,8 @@ baffles
 
         }
     }
-    ACMI2
+
+    ACMIInterface_2
     {
         //- Use predefined faceZone to select faces and orientation.
         type        faceZone;
@@ -86,7 +84,6 @@ baffles
                 nonOverlapPatch ACMI2_blockage;
                 transform       noOrdering;
             }
-
             slave // not used since we're manipulating a boundary patch
             {
                 //- Slave side patch
@@ -100,7 +97,6 @@ baffles
                 name            ACMI2_blockage;
                 type            wall;
             }
-
             slave2 // not used since we're manipulating a boundary patch
             {
                 //- Slave side patch
