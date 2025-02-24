@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  7.x                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -21,14 +21,15 @@ addLayers         false;
 
 geometry
 {
-	regionSTL.stl
+	regionSTL
 	{
+        file "regionSTL.stl";
 		type triSurfaceMesh;
 		regions
 		{
-			adiabatic { name adiabatic; };
-			cooling { name cooling; };
-			heating { name heating; };
+			adiabatic   { name adiabatic; };
+			cooling     { name cooling; };
+			heating     { name heating; };
 		}
 	}
 };
@@ -47,7 +48,7 @@ castellatedMeshControls
 
     refinementSurfaces
     {
-		regionSTL.stl
+		regionSTL
 		{
 			level (0 0);
 			regions

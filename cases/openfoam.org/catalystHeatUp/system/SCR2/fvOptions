@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  7.x                                   |
+|  \\    /   O peration     | Version:  9                                     |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -20,13 +20,13 @@ FoamFile
 Coupling
 {
     // OpenFOAM offers three different kind of heat transfers between regions
-    // a) constantHeatTransfer
-    //    Here, we set up the surface area / volume ratio in the AoV field
-    //    in 0/*/AoV, e.g., if we do have a catalyst, we know the ratio
+    // a) constant
+    //    Here, we set up the surface area / volume ratio in the AoV
+    //    , e.g., if we do have a catalyst, we know the ratio
     //    Furthermore, we set a constant heat-transfer-coefficient (HTC) in
-    //    W/m^2/K in the 0/*/hctConst
+    //    W/m^2/K 
     //
-    // b) variableHeatTransfer
+    // b) variable
     //    Here, one solves the following correlation:
     //    Nu = a * pow(Re, b) * pow(Pr, c)
     //   
@@ -36,27 +36,35 @@ Coupling
     //    ds:= struct diameter / characteristic length
     //    a, b, c are parameters to modify the Nu calculation
     // 
-    // c) tabulatedHeatTransfer
-    //    Here, the surface area / volume ratio has to be provided
-    //    The HTC is interpolated from a table
+    // c) function1 option
+    // d) function2 option
 
-    type                constantHeatTransfer;
-    nbrRegionName       fluid;                  // << Neigbour region name
-    interpolationMethod cellVolumeWeight;       // << Different possibilites
+    type                interRegionHeatTransfer;
+
+    interRegionHeatTransferCoeffs
+    {
+        type                constant;
+        nbrRegionName       fluid;              // << Neigbour region name
+        interpolationMethod cellVolumeWeight;   // << Different possibilites
                                                 //    set wrong name and start
                                                 //    the solver to see the
                                                 //    options (banana trick)
-    nbrModel            Coupling2;              // << Name of fvOption object
+        nbrModel            Coupling2;          // << Name of fvOption object
                                                 //    in neighour region
                                                 //    this one is named
                                                 //    'Coupling' << of line 20
-    fields              (h);                    // Field that is coupled
-    semiImplicit        false;                  // Semi-Implicit calculation
+        fields              (h);                // Field that is coupled
+        semiImplicit        false;              // Semi-Implicit calculation
 
-    // Model parameter for b)
-    //    a                   1;
-    //    b                   0.5;
-    //    c                   1.2;
+        AoV                 1400;
+        htc                 120;
+
+
+        // Model parameter for b)
+        //    a                   1;
+        //    b                   0.5;
+        //    c                   1.2;
+    }
 }
 
 

@@ -1,0 +1,69 @@
+#!/bin/bash
+#
+#----------------------------------------------#
+# Contributor: Tobias Holzmann                 #
+# Updated on:  28 Februar 2022                 #
+#----------------------------------------------#
+# Location:    https://Holzmann-cfd.com        #
+# Email:       community@Holzmann-cfd.com      #
+#----------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+# Preamble with the information about the tutorial
+echo -en "
+-------------------------------------------------------------------------------
+${GRAY}Tutorial by Tobias Holzmann${NC} :: Generated during November 2017
+${GRAY}Build for OpenFOAM version${NC}  :: OpenFOAM-v2112
+${GRAY}Tested on system${NC}            :: Ubuntu 20.04.4
+${GRAY}The case was updated on${NC}     :: 28 Februar 2022
+-------------------------------------------------------------------------------
+
+
+${GREEN}Topic: Community Christmas Competition 2017 - Suzannes Head${NC}
+-------------------------------------------------------------------------------
+A Jozsef Nagy invented competition. The challenge is to calculate the drag
+coefficient of the monkeys head named Suzanne. There are two constrains one
+has to be take care:
+- The flow direction
+- The geometry (the monkey head)
+
+Everything else is up to the community. A documentation about the case can be
+found in the download section at https://Holzmann-cfd.de\n\n
+"
+
+
+#------------------------------------------------------------------------------
+# Check the OpenFOAM version
+echo -e "   - Check OpenFOAM version. We need $foamVersion"
+userFoamVersion=`echo "$WM_PROJECT-$WM_PROJECT_VERSION"`
+
+if [ "$userFoamVersion" == "$foamVersion" ]
+then
+    echo -e  "   - ${GREEN}$foamVersion found...${NC}"
+
+else
+    echo -e  "   - ${ORANGE}You are not using the correct OpenFOAM version"
+    echo -en "     Your version is $userFoamVersion and we need ${GREEN}"
+    echo -e  "$foamVersion${NC}\n"
+
+    while true
+    do
+        echo -en  "   - Proceed with your OpenFOAM version (y/n): "
+        read proceed
+
+        if [ "$proceed" == "y" ]
+        then
+            break
+
+        elif [ "$proceed" == "n" ]
+        then
+            echo -e "\n\n"
+            exit
+
+        fi
+    done
+fi
+
+
+#------------------------------------------------------------------------------

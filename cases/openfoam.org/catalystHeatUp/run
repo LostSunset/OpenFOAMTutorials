@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  22 April 2020                      #
+# Updated on:  26 Oktober 2024                    #
 #-------------------------------------------------#
 # Topic:       Catalyst Heat-Up Case              #
-# OpenFOAM:    7.x                                #
+# OpenFOAM:    version 12 (Foundation)            #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-7.x"
+foamVersion="OpenFOAM-12"
 
 
 #------------------------------------------------------------------------------
@@ -48,47 +48,36 @@ ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
 
 
 #------------------------------------------------------------------------------
-echo -e "  - Meshing the SCR's using snappyHexMesh (generate cellZones)"
+echo -e "  - Meshing the exhaust pipe + SCR's using snappyHexMesh"
 snappyHexMesh -overwrite >> logMeshing
 
 
 #------------------------------------------------------------------------------
-echo -e "  - Split mesh into the single regions"
-splitMeshRegions -cellZones -overwrite >> logMeshing
+echo -n "  - Split mesh into the single non-connected regions based on "
+echo -e "the SRC zones - 5 regions in total"
+splitMeshRegions -cellZones >> logMeshing
 
 
 #------------------------------------------------------------------------------
-echo -e "  - Remove not needed meshes and dictionaries"
-rm -rf constant/polyMesh constant/region2 constant/region3 0 system/region* \
-    constant/region1
+echo -e "  - Move the SCR region meshes into to correct folders"
+mv 1e-06/SCR1/polyMesh constant/SCR1
+mv 1e-06/SCR2/polyMesh constant/SCR2
 
 
 #------------------------------------------------------------------------------
-echo -e "  - Create back ground mesh for the fluid"
-ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
-
-
-#------------------------------------------------------------------------------
-echo -e "  - Meshing the fluid using snappyHexMesh (+generate cellZones)"
-snappyHexMesh -overwrite >> logMeshing
-
-
-#------------------------------------------------------------------------------
-echo -e "  - Copy the fluid mesh into the correct folder"
+echo -e "  - Move the fluid region with SCR cellZones into to correct folder"
 mv constant/polyMesh constant/fluid
 
 
 #------------------------------------------------------------------------------
-echo -e "  - Combine and rename the boundaries"
-createPatch -region SCR1 -overwrite > logSolve
-createPatch -region SCR2 -overwrite >> logSolve
+echo -e "  - Remove the other split meshes and non-needed meshes"
+rm -r 1e-06 constant/cellToRegion*
 
 
 #------------------------------------------------------------------------------
-echo -e "  - Set the boundary type"
-changeDictionary -region SCR1 >> logSolve
-changeDictionary -region SCR2 >> logSolve
-changeDictionary -region fluid >> logSolve
+echo -e "  - Combine and rename the boundaries"
+createPatch -region SCR1 -overwrite >> logMeshing
+createPatch -region SCR2 -overwrite >> logMeshing
 
 
 #------------------------------------------------------------------------------
@@ -105,7 +94,7 @@ cp -r 0.orig 0
 
 
 #------------------------------------------------------------------------------
-if [ `which chtMultiRegionFoam` ]
+if [ `which foamMultiRun` ]
 then
 
     #--------------------------------------------------------------------------
@@ -126,8 +115,8 @@ then
 
 
     #--------------------------------------------------------------------------
-    echo -e "  - Start simulation (a few hours)"
-    mpirun -np $nC chtMultiRegionFoam -parallel >> logSolve
+    echo -e "  - Start simulation with foamMultiRun (a few hours) maxCo = 40"
+    mpirun -np $nC foamMultiRun -parallel >> logSolve
 
 
 else

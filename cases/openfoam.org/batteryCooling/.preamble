@@ -1,0 +1,69 @@
+#!/bin/bash
+#
+#----------------------------------------------#
+# Contributor: Tobias Holzmann                 #
+# Updated on:  10 Dezember 2024                #
+#----------------------------------------------#
+# Location:    https://Holzmann-cfd.com        #
+# Email:       community@Holzmann-cfd.com      #
+#----------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+# Preamble with the information about the tutorial
+echo -en "
+-------------------------------------------------------------------------------
+${GRAY}Tutorial by Tobias Holzmann${NC} :: Generated during December 2025
+${GRAY}Build for OpenFOAM version${NC}  :: OpenFOAM-12
+${GRAY}Tested on system${NC}            :: Ubuntu 24.04.1
+${GRAY}The case was updated on${NC}     :: 10 Dezember 2024
+-------------------------------------------------------------------------------
+
+
+${GREEN}Topic: Tesla Battery Cooling${NC}
+-------------------------------------------------------------------------------
+This project was initiatied by Alexander Sadowski who is an unique expert with
+the Open Source project FreeCAD.
+
+Credit to him, that the OpenFOAM community got a new OpenFOAM tutorial based
+on his initiation.
+
+The case provides interesting insights but is not perfect correct in terms of
+meshing and pyhsical approximation.\n\n
+"
+
+
+#------------------------------------------------------------------------------
+# Check the OpenFOAM version
+echo -e "   - Check OpenFOAM version. We need $foamVersion"
+userFoamVersion=`echo "$WM_PROJECT-$WM_PROJECT_VERSION"`
+
+if [ "$userFoamVersion" == "$foamVersion" ]
+then
+    echo -e  "   - ${GREEN}$foamVersion found...${NC}"
+
+else
+    echo -e  "   - ${ORANGE}You are not using the correct OpenFOAM version"
+    echo -en "     Your version is $userFoamVersion and we need ${GREEN}"
+    echo -e  "$foamVersion${NC}\n"
+
+    while true
+    do
+        echo -en  "   - Proceed with your OpenFOAM version (y/n): "
+        read proceed
+
+        if [ "$proceed" == "y" ]
+        then
+            break
+
+        elif [ "$proceed" == "n" ]
+        then
+            echo -e "\n\n"
+            exit
+
+        fi
+    done
+fi
+
+
+#------------------------------------------------------------------------------

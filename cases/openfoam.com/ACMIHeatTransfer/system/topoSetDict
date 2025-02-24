@@ -1,0 +1,92 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  www.openfoam.com                      |
+|   \\  /    A nd           | Version:  v2412                                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      topoSetDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+actions
+(
+    // Get both sides of ami
+    // ~~~~~~~~~~~~~~~~~~~~~
+
+    // Create faceSet using patch interfaceInner
+    {
+        name    interfaceInnerFaceSet;
+        type    faceSet;
+        action  new;
+        source  patchToFace;
+        sourceInfo
+        {
+            patch    interfaceInner;
+        }
+    }
+    // Create faceZoneSet using face set
+    {
+        name    interfaceInnerFaceZone;
+        type    faceZoneSet;
+        action  new;
+        source  setToFaceZone;
+        sourceInfo
+        {
+            faceSet interfaceInnerFaceSet;
+        }
+    }
+
+    // Create faceSet using patch interfaceOuter
+    {
+        name    interfaceOuterFaceSet;
+        type    faceSet;
+        action  new;
+        source  patchToFace;
+        sourceInfo
+        {
+            patch   interfaceOuter;
+        }
+    }
+    // Create faceZoneSet using face set
+    {
+        name    interfaceOuterFaceZone;
+        type    faceZoneSet;
+        action  new;
+        source  setToFaceZone;
+        sourceInfo
+        {
+            faceSet interfaceOuterFaceSet;
+        }
+    }
+
+    // Create cellZone for moving cells 
+    {
+        name    movingCellSet;
+        type    cellSet;
+        action  new;
+        source  boxToCell;
+
+        sourceInfo
+        {
+            box ( -1 -1 -1 ) ( 0 0.05  0.05);
+        }
+    }
+    {
+        name    movingZone;
+        type    cellZoneSet;
+        action  new;
+        source  setToCellZone;
+        sourceInfo
+        {
+            set     movingCellSet;
+        }
+    }
+);
+
+// ************************************************************************* //

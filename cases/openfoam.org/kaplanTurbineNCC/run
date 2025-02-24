@@ -1,0 +1,101 @@
+#!/bin/bash
+#
+#-------------------------------------------------#
+# Contributor: Tobias Holzmann                    #
+# Updated on:  10 Februar 2025                    #
+#-------------------------------------------------#
+# Topic:       6DOF and AMI in Kaplan Turbine     #
+# OpenFOAM:    version 12 (Foundation)            #
+#-------------------------------------------------#
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
+#-------------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+foamVersion="OpenFOAM-12"
+
+
+#------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+source clean
+source .color
+source .preamble
+
+
+#------------------------------------------------------------------------------
+if [ -f cad/backgroundMesh.unv ];
+then
+    echo "  - Background mesh exist, proceed..."
+else
+    echo "  - No background mesh exist, please build one"
+    echo ""
+    exit
+fi
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create background mesh"
+ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Decompose background mesh"
+decomposePar -force >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Meshing using snappyHexMesh (~ 2 minutes)"
+mpirun -np 4 snappyHexMesh -overwrite -parallel >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Reconstruct mesh"
+reconstructPar -constant >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create nonConformal patches"
+createNonConformalCouples -overwrite AMI AMI_slave >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Copy 0.org to 0"
+cp -r 0.orig 0
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Decompose the mesh again"
+decomposePar -force > logSolve
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Renumber the mesh again"
+mpirun -np 4 renumberMesh -overwrite -parallel >> logSolve
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Start simulation (this will need a long time)"
+mpirun -np 4 foamRun -parallel > logSolve
+
+
+#------------------------------------------------------------------------------
+echo -e "   - End\n\n"
+
+
+#------------------------------------------------------------------------------

@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  22 April 2020                      #
+# Updated on:  10 Februar 2025                    #
 #-------------------------------------------------#
 # Topic:       Adaptive mesh refinement           #
-# OpenFOAM:    7.x                                #
+# OpenFOAM:    version 12 (Foundation)            #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-7.x"
+foamVersion="OpenFOAM-12"
 
 
 #------------------------------------------------------------------------------
@@ -38,7 +38,7 @@ ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
 
 #------------------------------------------------------------------------------
 echo -e "   - Create surface feature edges"
-surfaceFeatureExtract >> logMeshing
+surfaceFeatures >> logMeshing
 
 
 #------------------------------------------------------------------------------
@@ -47,13 +47,8 @@ snappyHexMesh -overwrite >> logMeshing
 
 
 #------------------------------------------------------------------------------
-echo -e "   - Change boundary types of front and back"
-changeDictionary >> logMeshing
-
-
-#------------------------------------------------------------------------------
 echo -e "   - Prepare and clean case for adaptive mesh refinement"
-rm -rf 0 const*/polyMesh/refine*
+rm -rf 0
 
 
 #------------------------------------------------------------------------------
@@ -75,12 +70,14 @@ Start simulation
 
 
 #------------------------------------------------------------------------------
-echo -e "   - Call pimpleFoam and start the simulation (~10 - 20 minutes)"
-pimpleFoam > logSimulation
+echo -e "   - Start the simulation (~15 - 30 minutes)"
+foamRun > logSimulation
 
 
 #------------------------------------------------------------------------------
 echo -e "   - Simulation finished, use 'paraFoam' to check the results"
+echo -e "   - Alternative create an empty file with *.foam ending and load it"
+echo -e "     in ParaView"
 
 
 #------------------------------------------------------------------------------

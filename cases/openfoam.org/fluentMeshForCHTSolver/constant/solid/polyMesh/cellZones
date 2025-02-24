@@ -1,15 +1,14 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-|  \\    /   O peration     | Version:  6.x                                   |
-    \\  /    A nd           | Version:  dev
-     \\/     M anipulation  |
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
+|    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
-    version     2.0;
     format      ascii;
-    class       regIOobject;
+    class       cellZoneList;
     location    "constant/solid/polyMesh";
     object      cellZones;
 }
@@ -73341,7 +73340,7 @@ cellLabels      List<label>
 fluid
 {
     type cellZone;
-cellLabels      0();
+cellLabels      List<label> 0();
 }
 )
 

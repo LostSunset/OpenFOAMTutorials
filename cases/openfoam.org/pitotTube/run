@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  22 April 2020                      #
+# Updated on:  19 Oktober 2024                    #
 #-------------------------------------------------#
 # Topic:       Community Cristmas Competition     #
-# OpenFOAM:    7.x                                #
+# OpenFOAM:    version 12 (Foundation)             #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-7.x"
+foamVersion="OpenFOAM-12"
 
 
 #------------------------------------------------------------------------------
@@ -23,7 +23,7 @@ source clean
 source .color
 source .preamble
 
-cd 2D_to50ms
+cd 2D_0msto50ms
 
 #------------------------------------------------------------------------------
 if [ -f cad/backgroundMesh.unv ];
@@ -49,13 +49,17 @@ ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
 
 
 #------------------------------------------------------------------------------
-echo -e "   - Change the patch types for front and back"
-createPatch -overwrite >> logMeshing
+echo -e "   - Meshing with snappyHexMesh"
+snappyHexMesh -overwrite >> logMeshing
 
 
 #------------------------------------------------------------------------------
-echo -e "   - Meshing with snappyHexMesh"
-snappyHexMesh -overwrite >> logMeshing
+echo -e "   - Update the boundary types of the patches"
+changeDictionary >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Extrude the mesh to generate a 2D mesh"
 extrudeMesh >> logMeshing
 
 
@@ -80,7 +84,7 @@ decomposePar -force > logSolver
 
 #------------------------------------------------------------------------------
 echo -e "   - Start transient calculation (2-3 days to get to 50 m/s)"
-mpirun -np 2 pimpleFoam -parallel >> logSolver
+mpirun -np 2 foamRun -parallel >> logSolver
 
 
 #------------------------------------------------------------------------------
@@ -88,5 +92,6 @@ echo -e "   - Simulation ended\n\n"
 echo -e "   - For the others, create a symbolic link for the mesh"
 echo -e "     and decompose the case. Afterwards start pimpleFoam. Enjoy"
 
+cd ..
 
 #------------------------------------------------------------------------------

@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  7.x                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -142,7 +142,7 @@ PIMPLE
 
     //- Outer loops, re-calculation around p-U and other equations within
     //  one time step. For stiff problems while using under-relaxation
-    nOuterCorrectors    20;
+    nOuterCorrectors    1;
 
     //- Pressure corrections
     nCorrectors         2;
@@ -198,6 +198,7 @@ relaxationFactors
     //          --> can be used in some cases, generally not stable
     equations
     {
+        S                         1;
         "(k|epsilon|U)"           0.6;
         "(k|epsilon|U)Final"      1;
     }

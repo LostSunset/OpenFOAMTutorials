@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  7.x                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -22,7 +22,7 @@ pointSync false;
 // Patches to create.
 patches
 (
-    //- region1 would be the surrounding air that we dont consider
+    //- air that we dont consider
     {
         name            isolated;
         patchInfo
@@ -31,7 +31,7 @@ patches
         }
 
         constructFrom patches;
-        patches (iceCube1_to_region1);
+        patches (iceCube1_to_air);
     }
 );
 

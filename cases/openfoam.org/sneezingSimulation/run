@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  22 April 2020                      #
+# Updated on:  11 Februar 2025                    #
 #-------------------------------------------------#
 # Topic:       Sneezing Simulation                #
-# OpenFOAM:    7.x                                #
+# OpenFOAM:    version 12 (Foundation)            #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-7.x"
+foamVersion="OpenFOAM-12"
 
 
 #------------------------------------------------------------------------------
@@ -43,17 +43,7 @@ decomposePar >> logMeshing
 
 #------------------------------------------------------------------------------
 echo -e "   - Meshing with snappyHexMesh (~ 4 minutes)"
-mpirun -np 4 snappyHexMesh -overwrite -parallel >> logMeshing
-
-
-#------------------------------------------------------------------------------
-echo -e "   - Reconstruct the mesh"
-reconstructParMesh -constant -mergeTol 1e-6 >> logMeshing
-
-
-#------------------------------------------------------------------------------
-echo -e "   - Clean the case from processor folders"
-rm -rf process*
+mpirun -np 8 snappyHexMesh -overwrite -parallel >> logMeshing
 
 
 #------------------------------------------------------------------------------
@@ -64,24 +54,25 @@ End Meshing\n
 
 
 #------------------------------------------------------------------------------
-echo -e "   - Copy 0.org to 0"
-cp -r 0.orig 0
+echo -e "   - Copy 0.org to processor* folders"
+for p in $(ls -d processor*)
+do
+    rm -rf $p/0
+    cp -r 0.orig $p/0
+done
 
 
 #------------------------------------------------------------------------------
-echo -e "   - Renumbering the mesh"
-renumberMesh -overwrite > logSolver
+echo -e "   - Renumbering the mesh (here we get an error due to dynamic code)"
+echo -e "     I could not resolve the error up to now but the code works after"
+echo -e "     we execute it the seonc time - maybe a bug or some code issue)"
+mpirun -np 8 renumberMesh -overwrite -parallel > logSolver 2>&1
 
 
 #------------------------------------------------------------------------------
-echo -e "   - Decompose the mesh"
-decomposePar >> logSolver
-
-
-#------------------------------------------------------------------------------
-echo -e "   - Start the calculation (DPMFoam)"
-echo -e "     Note: Simulation performed using 30 cores in 20 h"
-mpirun -np 4 DPMFoam -parallel >> logSolver
+echo -e "   - Start the calculation"
+echo -e "     Note: Simulation performed using 8 cores in 24 h"
+mpirun -np 8 foamRun -parallel >> logSolver
 
 
 #------------------------------------------------------------------------------

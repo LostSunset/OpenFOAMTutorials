@@ -1,0 +1,143 @@
+#!/bin/bash
+#
+#-------------------------------------------------#
+# Contributor: Tobias Holzmann                    #
+# Updated on:  24 Februar 2022                    #
+#-------------------------------------------------#
+# Topic:       DAKOTA coupling with OpenFOAM      #
+# OpenFOAM:    version v2112 (Foundation)             #
+#-------------------------------------------------#
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
+#-------------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+foamVersion="OpenFOAM-v2112"
+
+
+#------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+source clean
+source .color
+source .preamble
+
+dakotaInputFile="system/dakotaDict"
+dakotaOutputFile="dakotaLog"
+optimizationLogFile="optimizationLog"
+
+
+#------------------------------------------------------------------------------
+if [ -f cad/backgroundMesh.unv ];
+then
+    echo "   - Background mesh exist, proceed..."
+else
+    echo "   - No background mesh exist, please excecute 'salome -t cad/*.py"
+    echo "     NOTE: python script not up-to-date... hence, you need out-dated"
+    echo "     salome versions < 5.6"
+    echo ""
+    exit
+fi
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create background mesh"
+ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Extract feature edges"
+surfaceFeatureExtract >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Meshing with snappyHexMesh (~ 20 seconds)"
+snappyHexMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Update the boundary types for front and back to empty"
+echo -e "     Note: as there is no dictionary, its by default entry0"
+echo -e "     Simply try «foamDictionary constant/polyMesh/boundary»"
+
+
+#------------------------------------------------------------------------------
+echo -en "     Change back patch: "
+foamDictionary constant/polyMesh/boundary -entry entry0.back.type -set empty
+foamDictionary constant/polyMesh/boundary -entry entry0.back.inGroups -remove
+
+
+#------------------------------------------------------------------------------
+echo -en "     Change front patch: "
+foamDictionary constant/polyMesh/boundary -entry entry0.front.type -set empty
+foamDictionary constant/polyMesh/boundary -entry entry0.front.inGroups -remove
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Flatten the mesh"
+flattenMesh >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Extrude one patch to make a 2D mesh"
+extrudeMesh  >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Renumber the mesh"
+renumberMesh -constant -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Check the mesh at the end"
+checkMesh  >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Copy 0.orig to 0"
+rm -r 0
+cp -r 0.orig 0
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Lets start doing DAKOTA the work for us"
+echo -e "     ++ Input file for dakota: $dakotaInputFile"
+echo -e "     ++ Output file for dakota: $dakotaOutputFile"
+echo -e "     ++ Log file: $optimizationLogFile"
+
+#### DAKOTA ####
+if command -v dakota &> /dev/null
+then
+    touch results.out
+    echo "1" > .optimizationLoop
+    dakota -i $dakotaInputFile -o $dakotaOutputFile > $optimizationLogFile &
+    echo -e "   - DAKOTA is running ...\n"
+    wait
+else
+    echo "    - No dakota application available, skip optimisation"
+fi
+
+best=`grep 'Best data' dakotaLog | cut -d' ' -f8`
+echo -e "   - Best result got with optimization $best"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Simulation successfully ended\n\n"
+
+
+#------------------------------------------------------------------------------

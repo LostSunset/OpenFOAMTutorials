@@ -1,0 +1,33 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      dynamicMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+mover
+{
+    type                motionSolver; 
+    libs                ("libfvMotionSolvers.so");
+
+    motionSolver            solidBody;
+    solidBodyMotionFunction oscillatingLinearMotion;
+
+    // With the NCC, it seems that we cannot dispatch completely anymore
+    cellZone        movingZone;
+    amplitude       (0 0.28 0);
+    omega           0.5; 
+}
+
+
+// ************************************************************************* //

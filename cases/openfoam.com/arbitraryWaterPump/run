@@ -1,0 +1,109 @@
+#!/bin/bash
+#
+#-------------------------------------------------#
+# Contributor: Tobias Holzmann                    #
+# Updated on:  14 Februar 2022                    #
+#-------------------------------------------------#
+# Topic:       Simple case with cyclic BC (FAN)   #
+# OpenFOAM:    version v2112 (Foundation)             #
+#-------------------------------------------------#
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
+#-------------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+foamVersion="OpenFOAM-v2112"
+
+
+#------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+source clean
+source .color
+source .preamble
+
+
+#------------------------------------------------------------------------------
+if [ -f cad/backgroundMesh.unv ];
+then
+    echo "  - Background mesh exist, proceed..."
+else
+    echo "  - No background mesh exist, please build one"
+    echo ""
+    exit
+fi
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "  - Create background mesh"
+ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "  - Meshing with snappyHexMesh (generate internal faces)"
+snappyHexMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "  - Convert internal faces to baffles"
+createBaffles -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "  - Copy 0.orig to 0"
+rm -rf 0
+cp -r 0.orig 0
+
+
+#------------------------------------------------------------------------------
+echo -e "  - Initialize water level"
+setFields > logSolve
+
+
+#------------------------------------------------------------------------------
+if [ `which interFoam` ]
+then
+    #--------------------------------------------------------------------------
+    echo -e "  - Decompose the stuff"
+    decomposePar >> logSolve
+
+
+    #--------------------------------------------------------------------------
+    echo -e "  - Renumber the mesh for speedup"
+    mpirun -np 8 renumberMesh -overwrite -parallel >> logSolve
+
+
+    #--------------------------------------------------------------------------
+    echo -e "  - Start simulation (several hours ~ 10h)"
+    mpirun -np 8 interFoam -parallel >> logSolve
+
+
+else
+    #--------------------------------------------------------------------------
+    echo -e "  - Can not start simulation, '${RED}interFoam$NC'"
+    echo -e " not available"
+
+
+fi
+
+
+#------------------------------------------------------------------------------
+echo -e "  - End\n\n"
+
+
+#------------------------------------------------------------------------------

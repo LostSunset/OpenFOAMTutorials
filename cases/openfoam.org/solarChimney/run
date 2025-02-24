@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  22 April 2020                      #
+# Updated on:  10 Februar 2025                    #
 #-------------------------------------------------#
 # Topic:       Bouyancy driven flows              #
-# OpenFOAM:    7.x                                #
+# OpenFOAM:    version 12 (Foundation)            #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,8 +13,8 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-7.x"
-application="buoyantPimpleFoam"
+foamVersion="OpenFOAM-12"
+application="foamRun"
 
 
 #------------------------------------------------------------------------------

@@ -1,0 +1,210 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version         2;
+    format          ascii;
+    class           dictionary;
+    object          snappyHexMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+castellatedMesh true;
+snap            true;
+addLayers       true;
+
+geometry
+{
+    regionSTL
+    {
+        file            "regionSTL.stl";
+        type            triSurfaceMesh;
+        regions
+        {
+            walls
+            {
+                name            walls;
+            }
+            freeWalls
+            {
+                name            freeWalls;
+            }
+            front
+            {
+                name            front;
+            }
+            back
+            {
+                name            back;
+            }
+            inlet
+            {
+                name            inlet;
+            }
+            outlet
+            {
+                name            outlet;
+            }
+            top
+            {
+                name            top;
+            }
+            bottom
+            {
+                name            bottom;
+            }
+        }
+    }
+}
+
+castellatedMeshControls
+{
+    maxLocalCells   2000000;
+    maxGlobalCells  8000000;
+    minRefinementCells 0;
+    nCellsBetweenLevels 50;
+    features        ( { file "regionSTL.eMesh" ; level 0 ; } );
+    refinementSurfaces
+    {
+        regionSTL
+        {
+            level           ( 0 0 );
+            regions
+            {
+                walls
+                {
+                    level           ( 2 2 );
+                    patchInfo
+                    {
+                        type            wall;
+                    }
+                }
+                freeWalls
+                {
+                    level           ( 1 1 );
+                    patchInfo
+                    {
+                        type            wall;
+                    }
+                }
+                front
+                {
+                    level           ( 1 1 );
+                    patchInfo
+                    {
+                        type            empty;
+                    }
+                }
+                back
+                {
+                    level           ( 1 1 );
+                    patchInfo
+                    {
+                        type            empty;
+                    }
+                }
+                inlet
+                {
+                    level           ( 2 2 );
+                    patchInfo
+                    {
+                        type            patch;
+                    }
+                }
+                outlet
+                {
+                    level           ( 1 1 );
+                    patchInfo
+                    {
+                        type            patch;
+                    }
+                }
+                top
+                {
+                    level           ( 1 1 );
+                    patchInfo
+                    {
+                        type            patch;
+                    }
+                }
+                bottom
+                {
+                    level           ( 1 1 );
+                    patchInfo
+                    {
+                        type            patch;
+                    }
+                }
+            }
+        }
+    }
+    resolveFeatureAngle 24;
+    refinementRegions
+    {
+    }
+    locationInMesh  ( 0.01 0.001 0 );
+    allowFreeStandingZoneFaces false;
+}
+
+snapControls
+{
+    nSmoothPatch    5;
+    tolerance       1.1;
+    nSolveIter      150;
+    nRelaxIter      4;
+    nFeatureSnapIter 4;
+    implicitFeatureSnap false;
+    explicitFeatureSnap true;
+    multiRegionFeatureSnap false;
+}
+
+addLayersControls
+{
+    relativeSizes   false;
+    layers
+    {
+        walls
+        {
+            nSurfaceLayers  1;
+        }
+    }
+    expansionRatio  1.3;
+    finalLayerThickness 0.0002;
+    minThickness    1e-06;
+    nGrow           0;
+    featureAngle    75;
+    nRelaxIter      8;
+    nSmoothSurfaceNormals 6;
+    nSmoothNormals  8;
+    nSmoothThickness 10;
+    maxFaceThicknessRatio 0.8;
+    maxThicknessToMedialRatio 0.6;
+    minMedianAxisAngle 90;
+    nMedialAxisIter 4;
+    nBufferCellsNoExtrude 0;
+    nLayerIter      50;
+    nRelaxedIter    20;
+}
+
+meshQualityControls
+{
+    #include        "meshQualityDict"
+    relaxed
+    {
+        maxNonOrtho     180;
+    }
+    nSmoothScale    4;
+    errorReduction  0.75;
+}
+
+writeFlags      ( scalarLevels layerSets layerFields );
+
+mergeTolerance  1e-06;
+
+
+// ************************************************************************* //

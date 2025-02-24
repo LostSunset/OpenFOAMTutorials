@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  22 April 2020                      #
+# Updated on:  28 Oktober 2024                    #
 #-------------------------------------------------#
 # Topic:       Thin Gap Meshing                   #
-# OpenFOAM:    7.x                                #
+# OpenFOAM:    version 12 (Foundation)            #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-7.x"
+foamVersion="OpenFOAM-12"
 
 
 #------------------------------------------------------------------------------
@@ -38,13 +38,13 @@ ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
 
 #------------------------------------------------------------------------------
 echo -e "   - Scale background mesh and triSurfaces"
-transformPoints -scale "(10000 10000 10000)" >> logMeshing
+transformPoints "scale=(10000 10000 10000)" >> logMeshing
 
-surfaceTransformPoints -scale "(10000 10000 10000)" \
+surfaceTransformPoints "scale=(10000 10000 10000)" \
     constant/triSurface/regionSTL.orig.stl \
     constant/triSurface/regionSTL.stl >> logMeshing
 
-surfaceTransformPoints -scale "(10000 10000 10000)" \
+surfaceTransformPoints "scale=(10000 10000 10000)" \
     constant/triSurface/specialGapRefinement.orig.stl \
     constant/triSurface/specialGapRefinement.stl >> logMeshing
 
@@ -56,7 +56,7 @@ snappyHexMesh -overwrite >> logMeshing
 
 #------------------------------------------------------------------------------
 echo -e "   - Transform mesh back to original size"
-transformPoints -scale "(0.0001 0.0001 0.0001)"  >> logFile
+transformPoints "scale=(0.0001 0.0001 0.0001)"  >> logFile
 
 
 #------------------------------------------------------------------------------

@@ -1,0 +1,62 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  www.openfoam.com                      |
+|   \\  /    A nd           | Version:  v2412                                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      topoSetDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+actions
+(
+    // Get all faces that are moving
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // Faces of all outer boundaries
+    {
+        name    movingBoundaryFaces;
+        type    faceZoneSet;
+        action  new;
+        source  patchToFace;
+        sourceInfo
+        {
+            patch   wall;
+        }
+    }
+    {
+        name    staticBoundaryFaces;
+        type    faceZoneSet;
+        action  new;
+        source  patchToFace;
+        sourceInfo
+        {
+            patch   wall;
+        }
+    }
+    {
+        name    staticBoundaryFaces;
+        type    faceZoneSet;
+        action  subtract;
+        source  cylinderToFace;
+        point1  (0 0 -1);
+        point2  (0 0 1);
+        radius  0.0499;
+    }
+    {
+        name    movingBoundaryFaces;
+        type    faceZoneSet;
+        action  subtract;
+        source  faceToFace;
+        set     staticBoundaryFaces;
+    }
+
+);
+
+// ************************************************************************* //

@@ -1,0 +1,146 @@
+#!/bin/bash
+#
+#-------------------------------------------------# Contributor: Tobias Holzmann                    #
+# Updated on:  26 Januar 2025                     #
+# Updated on:  10 Februar 2025                    #
+# Topic:       2D AMI generation using baffles    #
+# OpenFOAM:    version 12 (Foundation)            #
+# OpenFOAM:    version 12 (Foundation)            #
+# Website:     https://Holzmann-cfd.com           #
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
+
+
+#------------------------------------------------------------------------------
+foamVersion="OpenFOAM-12"
+
+
+#------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+source clean
+source .color
+source .preamble
+
+
+#------------------------------------------------------------------------------
+if [ -f cad/backgroundMesh.unv ];
+then
+    echo "   - Background mesh exist, proceed..."
+else
+    echo "   - No background mesh exist, please create one'"
+    echo ""
+    exit
+fi
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create background mesh"
+ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Meshing with snappyHexMesh (~ 80 seconds)"
+snappyHexMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Change the patch type to empty of front and empty"
+changeDictionary >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Flatten front and back site"
+flattenMesh >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Build a 2D mesh"
+extrudeMesh >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Cleaning"
+rm constant/polyMesh/*Zones constant/polyMesh/*Level* constant/polyMesh/level* \
+    0 -rf
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Building the cellZones in 2D"
+topoSet >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create Baffles for AMI and the pipe wall"
+createBaffles -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Split baffles"
+splitBaffles -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create nonConformal patches"
+createNonConformalCouples -overwrite AMI1 AMI2 >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n
+"
+
+#------------------------------------------------------------------------------
+echo -e "   - Copy 0.orig to 0"
+rm -rf 0 -- -4
+cp -r -- 0.orig -4
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Start simulation"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Renumber mesh for speedup (~5-15%)"
+renumberMesh -overwrite > logSolver
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Start transient calculation without rotation (a few minutes)"
+echo -e "     Since v12, we cannot set the time for rotation start anymore"
+echo -e "     Thus, we start at -4s to 0s init the passive scalar field"
+foamDictionary system/controlDict -entry startTime -set -4 >> logSolver
+foamDictionary system/controlDict -entry endTime -set 0.025 >> logSolver
+foamRun >> logSolver
+
+
+#------------------------------------------------------------------------------
+# Workaround for v12 since we start at -4 s, time 0 is not reached perfectly
+# Thus we go to 0.025 and rename it to be 0
+echo -e "   - Quick and dirty fix for v12"
+mv 0.025 0
+rm -r 0/uniform
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Start rotation (approx one hour)"
+echo -e "     Run time increased due to conservative NCC (> 20 %)"
+foamDictionary system/controlDict -entry startTime -set 0 >> logSolver
+foamDictionary system/controlDict -entry endTime -set 6 >> logSolver
+cp constant/.dynamicMeshDict constant/dynamicMeshDict
+foamRun >> logSolver
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Simulation ended\n\n"
+
+
+#------------------------------------------------------------------------------

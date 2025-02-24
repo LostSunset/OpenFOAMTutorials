@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  7.x                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -15,7 +15,9 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     simpleFoam;
+application     foamRun;
+
+solver          incompressibleFluid;
 
 startFrom       latestTime;
 
@@ -62,6 +64,9 @@ functions
         schemesField    T;
         nCorr           0;
         resetOnStartUp  false;
+        diffusivity     viscosity; 
+        alphal          1;
+        alphat          1;
     }
 
     //- Flux weighted average temperature at outlet surface
@@ -75,7 +80,7 @@ functions
 
         regionType      patch;
         name            outlet;
-        operation       weightedAreaAverage;
+        operation       areaAverage;
         weightField     phi;
         surfaceFormat   off;
 

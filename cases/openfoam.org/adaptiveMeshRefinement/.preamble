@@ -2,7 +2,7 @@
 #
 #----------------------------------------------#
 # Contributor: Tobias Holzmann                 #
-# Updated on:  22 April 2020                   #
+# Updated on:  10 Februar 2025                 #
 #----------------------------------------------#
 # Location:    https://Holzmann-cfd.com        #
 # Email:       community@Holzmann-cfd.com      #
@@ -14,13 +14,15 @@
 echo -en "
 -------------------------------------------------------------------------------
 ${GRAY}Tutorial by Tobias Holzmann${NC} :: Generated during February 2015
-${GRAY}Build for OpenFOAM version${NC}  :: OpenFOAM-7.x
-${GRAY}Tested on system${NC}            :: Ubuntu 19.10
-${GRAY}The case was updated on${NC}     :: 22 April 2020
+${GRAY}Build for OpenFOAM version${NC}  :: OpenFOAM-12
+${GRAY}Tested on system${NC}            :: Ubuntu 24.04.1
+${GRAY}The case was updated on${NC}     :: 10 Februar 2025
 -------------------------------------------------------------------------------
 
 
-${GREEN}Topic: Pseude 2D Adaptive mesh refinement${NC}
+${GREEN}Topic: Pseudo 2D Adaptive mesh refinement
+Note: Since v12 the case was set up more realisticly as bugs were removed
+      the changes were necessary${NC}
 -------------------------------------------------------------------------------
 "
 
@@ -28,7 +30,7 @@ ${GREEN}Topic: Pseude 2D Adaptive mesh refinement${NC}
 #------------------------------------------------------------------------------
 # Check the OpenFOAM version
 echo -e "   - Check OpenFOAM version. We need $foamVersion"
-userFoamVersion=`echo "$WM_PROJECT-$WM_PROJECT_VERSION"` 
+userFoamVersion=`echo "$WM_PROJECT-$WM_PROJECT_VERSION"`
 
 if [ "$userFoamVersion" == "$foamVersion" ]
 then

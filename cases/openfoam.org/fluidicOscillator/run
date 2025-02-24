@@ -1,0 +1,115 @@
+#!/bin/bash
+#
+#-------------------------------------------------#
+# Contributor: Tobias Holzmann                    #
+# Updated on:  10 Februar 2025                    #
+#-------------------------------------------------#
+# Topic:       Bifluidic Oscillator               #
+# OpenFOAM:    version 12 (Foundation)            #
+#-------------------------------------------------#
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
+#-------------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+foamVersion="OpenFOAM-12"
+
+
+#------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+source clean
+source .color
+source .preamble
+#------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+if [ -f cad/backgroundMesh.unv ];
+then
+    echo "   - Background mesh exist, proceed..."
+else
+    echo "   - No background mesh exist, please create a background"
+    echo ""
+    exit
+fi
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Create background mesh"
+ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
+transformPoints "translate=(-0.0005 0 0)" >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Extract feature edges"
+surfaceFeatures >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Meshing with snappyHexMesh with layers"
+snappyHexMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Extrude front to make a 2D mesh"
+flattenMesh >> logMeshing
+extrudeMesh >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Move mesh to correct possition (for STL, postProcessing)"
+transformPoints "translate=(0 -0.005 0)"  >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Creating cell zone set for passiv scalar (alternativ topoSet)"
+topoSet >> logMeshing
+rm constant/polyMesh/sets
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n
+"
+
+#------------------------------------------------------------------------------
+echo -e "   - Copy 0.orig to 0"
+rm -r 0
+cp -r 0.orig 0
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Decompose the mesh to four processors"
+decomposePar -force > logSolver
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Renumber mesh for speedup (~5-15%)"
+mpirun -np 4 renumberMesh -overwrite -parallel >> logSolver
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Pre-Init the field for alpha"
+mpirun -np 4 setFields -parallel >> logSolver
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Start transient calculation (a few hours, run over night)"
+mpirun -np 4 foamRun >> logSolver
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Simulation ended\n\n"
+
+
+#------------------------------------------------------------------------------

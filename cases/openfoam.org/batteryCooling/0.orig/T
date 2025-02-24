@@ -1,0 +1,69 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       volScalarField;
+    object      T;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 293;
+
+boundaryField
+{
+    // Need to be included because the boundary files are copied after the
+    // decomposition was started. Thus, the boundary conditions of any field
+    // does not include special BC which are introduced when we split a mesh
+    // such as processor boundary. To avoid issues, we include the basic-
+    // generic boundary condition file
+    #includeEtc "caseDicts/setConstraintTypes"
+
+    // This is a group that includes the batteries and channel wall
+    // We can also specify single patch definition or merge them into groups
+    // and only everything with one entry
+    wall
+    {
+        type            zeroGradient;
+    }
+
+    // The boundary condition for the batteries would be specifed by the
+    // entry above (wall -> group). But in OpenFOAM the patches/groups
+    // are read from the bottom. Hence, the entry which comes later wins.
+    // If one would put the below given BC above the "wall" definition, it will
+    // not be recognized since the patch is already initialized with the 
+    // definition given above
+    // 100W per battery = 20 batteries x 100W = 2000 W
+    tesla-4680Battery
+    {
+        type            externalTemperature;
+        Q               constant 2000;
+        value           $internalField;
+    }
+
+    inlet
+    {
+        type            fixedValue;
+        value           $internalField;
+    }
+
+    outlet
+    {
+        type            inletOutlet;
+        value           $internalField;
+
+        // If recirculation occurs, we put a higher temperature back to the
+        // domain compared to the inlet one (just as an example - no 
+        // physical meaning behind that)
+        inletValue      uniform 300;
+    }
+}
+
+// ************************************************************************* //

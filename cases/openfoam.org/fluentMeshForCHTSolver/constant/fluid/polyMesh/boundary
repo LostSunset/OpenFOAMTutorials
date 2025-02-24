@@ -1,13 +1,12 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-|  \\    /   O peration     | Version:  6.x                                   |
-    \\  /    A nd           | Version:  dev
-     \\/     M anipulation  |
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
+|    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
-    version     2.0;
     format      ascii;
     class       polyBoundaryMesh;
     location    "constant/fluid/polyMesh";
@@ -32,12 +31,12 @@ FoamFile
     fluid_to_solid
     {
         type            mappedWall;
-        inGroups        1(wall);
+        inGroups        List<word> 1(wall);
         nFaces          12692;
         startFace       289525;
-        sampleMode      nearestPatchFace;
-        sampleRegion    solid;
-        samplePatch     solid_to_fluid;
+        neighbourRegion solid;
+        neighbourPatch  solid_to_fluid;
+        transformType   none;
     }
 )
 

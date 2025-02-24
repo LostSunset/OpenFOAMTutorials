@@ -14,27 +14,7 @@ clear
 
 
 #-------------------------------------------------------------------------------
-cd 2D_to50ms
-foamCleanTutorials
-rm -rf log*
-
-cd ../2D_01
-foamCleanTutorials
-rm -rf log*
-
-cd ../2D_1
-foamCleanTutorials
-rm -rf log*
-
-cd ../2D_67
-foamCleanTutorials
-rm -rf log*
-
-cd ../2D_100
-foamCleanTutorials
-rm -rf log*
-
-cd ../2D_240
+cd 2D_0msto50ms
 foamCleanTutorials
 rm -rf log*
 

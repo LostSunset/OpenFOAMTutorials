@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  22 April 2020                      #
+# Updated on:  28 Oktober 2024                    #
 #-------------------------------------------------#
 # Topic:       Droplets                           #
-# OpenFOAM:    7.x                                #
+# OpenFOAM:    version 12 (Foundation)            #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-7.x"
+foamVersion="OpenFOAM-12"
 
 
 #------------------------------------------------------------------------------
@@ -63,8 +63,8 @@ then
 
 
     #--------------------------------------------------------------------------
-    echo -e "   - Start simulation (~ 30 minutes)"
-    interFoam >> logSolve
+    echo -e "   - Start simulation (~ 35 minutes)"
+    foamRun >> logSolve
 
 
     #--------------------------------------------------------------------------

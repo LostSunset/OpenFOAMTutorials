@@ -1,0 +1,143 @@
+#!/bin/bash
+#
+#-------------------------------------------------#
+# Contributor: Tobias Holzmann                    #
+# Updated on:  05 Februar 2022                    #
+#-------------------------------------------------#
+# Topic:       Simple case with cyclic BC (FAN)   #
+# OpenFOAM:    version v2112 (Foundation)             #
+#-------------------------------------------------#
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
+#-------------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+foamVersion="OpenFOAM-v2112"
+
+
+#------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+source clean
+source .color
+source .preamble
+
+
+#------------------------------------------------------------------------------
+if [ -f cad/backgroundMesh.unv ];
+then
+    echo "  - Background mesh exist, proceed..."
+else
+    echo "  - No background mesh exist, please build a mesh"
+    echo ""
+    exit
+fi
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+Start meshing
+-------------------------------------------------------------------------------
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "  - Create background mesh"
+ideasUnvToFoam cad/backgroundMesh.unv > logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "  - Meshing with snappyHexMesh (generate cellZones)"
+snappyHexMesh -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "  - Split mesh into regions"
+splitMeshRegions -cellZones -overwrite >> logMeshing
+
+
+#------------------------------------------------------------------------------
+echo -e "  - Remove not needed meshes and dictionaries"
+rm -rf constant/polyMesh constant/domain* constant/glass 0 system/domain* \
+    system/glass
+
+
+#------------------------------------------------------------------------------
+echo -e "\n
+-------------------------------------------------------------------------------
+End Meshing\n
+"
+
+
+#------------------------------------------------------------------------------
+echo -e "  - Copy 0.orig to 0"
+rm -rf 0
+cp -r 0.orig 0
+
+
+
+#------------------------------------------------------------------------------
+echo -e "  - Rename the boundary names"
+createPatch -region ginTonic -overwrite > logSolve
+createPatch -region iceCube1 -overwrite >> logSolve
+createPatch -region iceCube2 -overwrite >> logSolve
+
+
+#------------------------------------------------------------------------------
+echo -e "  - Set up the boundary conditions and initial values"
+changeDictionary -region ginTonic >> logSolve
+changeDictionary -region iceCube1 >> logSolve
+changeDictionary -region iceCube2 >> logSolve
+
+
+#------------------------------------------------------------------------------
+echo -e "  - Complete the thermodynamic stuff"
+cd constant/ginTonic
+ln -s ../thermoPropertiesFluid/* .
+cd ../iceCube1
+ln -s ../thermoPropertiesSolid/* .
+cd ../iceCube2
+ln -s ../thermoPropertiesSolid/* .
+cd ../../
+
+
+#------------------------------------------------------------------------------
+if [ `which chtMultiRegionFoam` ]
+then
+
+    #--------------------------------------------------------------------------
+    echo -e "  - Get core numbers"
+    nC=`cat system/decomposeParDict | grep "numberOf" | cut -d' ' -f2 | \
+        cut -d';' -f1`
+
+    #--------------------------------------------------------------------------
+    echo -e "  - Decompose the stuff"
+    decomposePar -allRegions >> logSolve
+
+
+    #--------------------------------------------------------------------------
+    echo -e "  - Renumber the mesh"
+    mpirun -np $nC renumberMesh -regions ginTonic iceCube1 iceCube2 \
+        -overwrite -parallel >> logSolve
+
+
+    #--------------------------------------------------------------------------
+    echo -e "  - Start simulation (a few hours)"
+    mpirun -np $nC chtMultiRegionFoam -parallel >> logSolve
+
+
+else
+    #--------------------------------------------------------------------------
+    echo -e "  - Can not start simulation, '${RED}chtMultiRegionFoam$NC'"
+    echo -e " not available"
+
+
+fi
+
+
+#------------------------------------------------------------------------------
+echo -e "  - End\n\n"
+
+
+#------------------------------------------------------------------------------

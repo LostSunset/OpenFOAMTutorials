@@ -2,10 +2,10 @@
 #
 #-------------------------------------------------#
 # Contributor: Tobias Holzmann                    #
-# Updated on:  22 April 2020                      #
+# Updated on:  10 Februar 2025                    #
 #-------------------------------------------------#
 # Topic:       DAKOTA coupling with OpenFOAM      #
-# OpenFOAM:    7.x                                #
+# OpenFOAM:    version 12 (Foundation)            #
 #-------------------------------------------------#
 # Website:     https://Holzmann-cfd.com           #
 # Email:       community@Holzmann-cfd.com         #
@@ -13,7 +13,7 @@
 
 
 #------------------------------------------------------------------------------
-foamVersion="OpenFOAM-7.x"
+foamVersion="OpenFOAM-12"
 
 
 #------------------------------------------------------------------------------
@@ -34,6 +34,8 @@ then
     echo "   - Background mesh exist, proceed..."
 else
     echo "   - No background mesh exist, please excecute 'salome -t cad/*.py"
+    echo "     NOTE: python script not up-to-date... hence, you need out-dated"
+    echo "     salome versions < 5.6"
     echo ""
     exit
 fi
@@ -65,7 +67,6 @@ snappyHexMesh -overwrite >> logMeshing
 echo -e "   - Extrude one patch to make a 2D mesh"
 extrudeMesh  >> logMeshing
 
-
 #------------------------------------------------------------------------------
 echo -e "   - Remove not necessary boundarys"
 createPatch -overwrite  >> logMeshing
@@ -85,7 +86,7 @@ End Meshing\n
 
 #------------------------------------------------------------------------------
 echo -e "   - Copy 0.orig to 0"
-rm -r 0
+rm -rf 0
 cp -r 0.orig 0
 
 
@@ -96,8 +97,9 @@ echo -e "     ++ Output file for dakota: $dakotaOutputFile"
 echo -e "     ++ Log file: $optimizationLogFile"
 
 #### DAKOTA ####
-if [ `which dakota | grep 'dakota' -c` == 1 ];
+if command -v dakota &> /dev/null
 then
+    touch results.out
     echo "1" > .optimizationLoop
     dakota -i $dakotaInputFile -o $dakotaOutputFile > $optimizationLogFile &
     echo -e "   - DAKOTA is running ...\n"

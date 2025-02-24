@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  7.x                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -49,15 +49,19 @@ SIMPLE
 {
     nNonOrthogonalCorrectors 0;
 
+    // Switch from SIMPLE to SIMPLEC algorithm
+    consistent no;
+
     residualControl
     {
-        p     1e-3;
-        U     1e-4;
+        p     1e-4;
+        U     1e-5;
     }
 }
 
 relaxationFactors
 {
+    // Relaxation for SIMPLE algorithm
     fields
     {
         p               0.3;
@@ -70,6 +74,22 @@ relaxationFactors
         R               0.3;
         nuTilda         0.3;
     }
+
+    // Relaxation for SIMPLEC algorithm
+    /*fields
+    {
+        // Not needed
+        p               0.98;
+    }
+    equations
+    {
+        U               0.8;
+        k               0.8;
+        epsilon         0.8;
+        R               0.8;
+        nuTilda         0.8;
+    }
+    */
 }
 
 

@@ -66,7 +66,7 @@ cp -r 0.orig 0
 
 
 #------------------------------------------------------------------------------
-if [ `which TEGFoam` ]
+if ls -l $FOAM_USER_LIBBIN | grep -q 'libsolverTEGModule.so'
 then
 
     #--------------------------------------------------------------------------
@@ -80,17 +80,21 @@ then
 
 
     #--------------------------------------------------------------------------
-    echo -e "   - Start simulation"
-    mpirun -np 4 TEGFoam -parallel >> logSolve
+    echo -e "   - Set the fields (different thermal conductivities)"
+    mpirun -np 4 setFields -parallel >> logSolve
+
+
+    #--------------------------------------------------------------------------
+    echo -e "   - Start simulation with own solver module"
+    mpirun -np 4 foamRun -parallel >> logSolve
 
 
     #--------------------------------------------------------------------------
 else
 
     #--------------------------------------------------------------------------
-    echo -en "   - Can not start simulation, '${ORANGE}TEGFoam$NC'"
-    echo -e " not available"
-    echo -e "     You have to compile the application first"
+    echo -en "   - Can not start simulation since solver module is missing"
+    echo -e "     You have to compile the module first"
 
 
     #--------------------------------------------------------------------------

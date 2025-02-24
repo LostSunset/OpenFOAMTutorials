@@ -1,0 +1,69 @@
+#!/bin/bash
+#
+#-------------------------------------------------#
+# Contributor: Tobias Holzmann                    #
+# Updated on:  16 Februar 2022                    #
+#-------------------------------------------------#
+# Topic:       DAKOTA coupling with OpenFOAM      #
+# OpenFOAM:    version v2112 (Foundation)             #
+#-------------------------------------------------#
+# Website:     https://Holzmann-cfd.com           #
+# Email:       community@Holzmann-cfd.com         #
+#-------------------------------------------------#
+
+
+#------------------------------------------------------------------------------
+foamVersion="OpenFOAM-v2112"
+
+
+#------------------------------------------------------------------------------
+cd ${0%/*} || exit 1
+clear
+source clean
+source .color
+source .preamble
+
+dakotaInputFile="system/dakotaDict"
+dakotaOutputFile="dakotaLog"
+optimizationLogFile="optimizationLog"
+
+
+# Analyze stuff (Post-Processing)
+#------------------------------------------------------------------------------
+mkdir -p results
+touch results/paraview.foam
+
+
+#------------------------------------------------------------------------------
+echo -e "   - Lets start doing DAKOTA the work for us"
+echo -e "     ++ Input file for dakota: $dakotaInputFile"
+echo -e "     ++ Output file for dakota: $dakotaOutputFile"
+echo -e "     ++ Log file: $optimizationLogFile"
+echo -e "     ++ Average Temperature at outlet should be: $Tmean"
+
+
+# Check for DAKOTA and start if found
+#------------------------------------------------------------------------------
+if command -v dakota &> /dev/null
+then
+    echo "1" > .optimizationLoop
+    dakota -i $dakotaInputFile -o $dakotaOutputFile > $optimizationLogFile &
+    echo -e "   - ${GREEN}DAKOTA found. Start...${NC}\n"
+    wait
+else
+    echo "   - ${RED}No dakota application available, skip DAKOTA${NC}\n\n"
+    exit
+fi
+
+
+#------------------------------------------------------------------------------
+echo -e "   - DAKOTA analyzes successfully ended\n\n"
+
+
+# Clean the case a bit
+#------------------------------------------------------------------------------
+#rm -fr Tmin Tmax Taverage dakota.rst S4 *.out postProcessing
+#mv LHS* results
+
+
+#------------------------------------------------------------------------------

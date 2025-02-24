@@ -82,16 +82,14 @@ dprepro $1 system/dakotaParameter.orig system/dakotaParameter
     # Run the simulation
     #---------------------------------------------------------------------------
     >&2 echo "   |--> Start stimulation"
-    simpleFoam > $logFolder_/solving
+    foamRun > $logFolder_/solving
 
 
     # Get the minimum, maximum and average value of the temperature on the
     # outlet patch
     #---------------------------------------------------------------------------
-    postProcess -latestTime -func 'faceMin(T,regionType=patch,name=outlet)' \
-        > Tmin
-    postProcess -latestTime -func 'faceMax(T,regionType=patch,name=outlet)' \
-        > Tmax
+    postProcess -latestTime -func patchOutletMin > Tmin
+    postProcess -latestTime -func patchOutletMax > Tmax
 
     # Mass flow weighted mean temperature
     #---------------------------------------------------------------------------
@@ -162,5 +160,6 @@ dprepro $1 system/dakotaParameter.orig system/dakotaParameter
 cp .dakotaInput.dak $2
 
 sleep 2.1
+
 
 #------------------------------------------------------------------------------

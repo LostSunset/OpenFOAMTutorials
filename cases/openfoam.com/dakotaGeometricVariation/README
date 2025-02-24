@@ -1,0 +1,96 @@
+#!/bin/bash
+#
+#----------------------------------------------#
+# Contributor: Tobias Holzmann                 #
+# Last Change: October 2016                    #
+# Topic:       DAKOTA coupling with OpenFOAM   #
+# Email:       Tobias.Holzmann@Holzmann-cfd.de #
+#----------------------------------------------#
+#
+#
+# Thanks to Harald Unger for mentioning the idea of the case
+#
+# ** run
+#-----------------------------------------------------------------------------
+# The run script is just outputing some information, cleans the case
+# and checkes if the swak4Foam and dakota environment is available. If we have
+# both, the script starts dakota and uses the dakota input file
+#
+#   ++ system/dakotaDict
+#
+# Here, we make the settings for DAKOTA and tell it, which script the toolbox
+# should call for the interface:
+#
+#   ++ dakota.sh
+#
+#
+# ** clean
+#-----------------------------------------------------------------------------
+# The clean script just cleans the tutorial and deletes all non needed files
+#
+#
+# ** createMesh
+#-----------------------------------------------------------------------------
+# This script is a basic script that you will find in all my tutorials. It
+# simply creates the mesh with the given commands
+#
+#
+# ** dakota.sh
+#-----------------------------------------------------------------------------
+# This is the main script that is excecuted by dakota (see system/dakotaDict)
+# We are using the command - dprepro - for manipulating our files and use it
+# as interface.
+#
+# Brief description of the script:
+# At the beginning we set just a variable. After that we
+# manipulate the file
+#
+#   ++ system/dakotaParameters.orig
+#
+# After that, we have the new quantities in the corresponding files and we
+# we make some simple manipulation for displaing the stuff. Then, we
+# manipulate the needed files:
+#
+#   ++ change the rotation of baffle 1
+#   ++ change the rotation of baffle 2
+#   ++ change the length of the inlet of the cold stream
+#
+# If this is done, we create the new mesh by executing
+#
+#   ++ createMesh
+#
+#  and run the simulation hence, it is converged or we reach the number of
+#  iterations we set in the controlDict for OpenFOAM.
+#  Then, we need to extract the information of interest. In our case the
+#  massflux averaged temperature distribution and the min and max values of
+#  the temperature with respekt to the outlet are used. A homogeneous T field
+#  profile yields, that Tmin is equal to Tmax. Hence, we build a function
+#  func2 which should be minimized. In addition we build a second function
+#  that represents the different of the averaged field to the field we want
+#  to have. Here, we want to have a very homogeneous field which should be
+#  320K. <<< This can be handled within an optimization schedule which is not
+#  demonstrated here.
+#
+#  The new generated function values are put to a file called
+#
+#   ++ .dakotaInput.dak
+#
+#   which is then loaded by dakota at the end again.
+#   During the steps described above, we further do some cleaning of the case
+#   and save the mesh with the corresponding data to the result dictionary.
+#   Loading the paraview.foam file with paraview allows us to see the
+#   different calculated designs within the method we choose.
+#
+#   Of course, the results are stored also in a file called analyseData.dat
+#   that is produced by dakota itself.
+#
+#
+#-----------------------------------------------------------------------------
+#
+#
+#   The simulation (based on the fact that it is a randomized multi-dimension
+#   study based on SAMPLING with LHS) could be also run in parallel for speed
+#   up the single calculations.
+#
+#
+#-----------------------------------------------------------------------------

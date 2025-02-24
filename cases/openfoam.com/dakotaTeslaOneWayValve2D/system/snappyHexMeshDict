@@ -1,0 +1,306 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2112                                 |
+|   \\  /    A nd           | Website:                                        |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      snappyHexMeshDict;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+//- Personal comments to the file. Standard comments are given in the 
+//  normal snappyHexMesh cases
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+castellatedMesh true;
+snap            true;
+addLayers       false;
+
+geometry
+{
+    //- The file name in constant/triSurface
+    //  This file contains the building
+    regionSTL.stl
+    {
+        type triSurfaceMesh;
+
+        //- If your STL is build up of several STL's (watertight), then
+        //  you can use these regions for the single patches
+        //  Follow the screen cast about the 'building a project', all
+        //  details are explained here
+        regions
+        {
+            inlet       { name inlet; }
+            outlet      { name outlet; }
+            wall        { name wall; }
+            front       { name front; }
+            back        { name back; }
+        }
+    }
+};
+
+
+
+// Settings for the castellatedMesh generation.
+castellatedMeshControls
+{
+
+    // Refinement parameters
+    // ~~~~~~~~~~~~~~~~~~~~~
+
+    //- After the mesh gets more cells than the value specified, no further
+    //  refinement is done. Limiting for memory overflow and freezing. Refered
+    //  to a single processor (decompose)
+    maxLocalCells 20000000;
+
+    //- After this amount of cells are reached (cummulative on all processors)
+    //  no further refinement takes place
+    maxGlobalCells 10000000;
+
+    //- This is an important key values for the speed. Sometimes, sHM refines
+    //  just a few cells which can reduce the meshing stage extremely. The
+    //  bigger the meshes, the more important these values get. Sure, simple
+    //  geometries are easier than complex curvature ones
+    minRefinementCells 0;
+
+    //- Important key values. This defines how many cells are inbetween 
+    //  different refinement levels. There are regions which do not hold this
+    //  specification
+    nCellsBetweenLevels 12;
+
+
+
+    // Explicit feature edge refinement
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    features
+    (
+        {
+            //  You may extract the feature edges via surfaceFeatures
+            //  Holzmann CFD recommends to recheck the file A L W A Y S.
+            //  Also possible to generate it via Blender; see the screen
+            //  cast about the 'Building a Project'
+
+            //- File name located in constant/triSurface
+            file    "regionSTL.eMesh";
+
+            //- Additionally the refinement can be specified for such
+            //  edges. Powerful, if applied correctly. See the tutorial
+            //  surfaceFeatures and snappyHexMesh
+            //  a) Single level usage -> level 1;
+            //  b) Distance level usage -> level ((0.1 2) (0.2 1));
+            level 0;
+        }
+    );
+
+
+
+    // Surface based refinement
+    // ~~~~~~~~~~~~~~~~~~~~~~~~
+
+    refinementSurfaces
+    {
+        regionSTL.stl
+        {
+            // General refinement - more like a dummy value for regions
+            level (0 0);
+            regions
+            {
+                // Patch name and its refinement plus patch type
+                inlet       { level (0 0); patchInfo { type patch; }}
+                outlet      { level (0 0); patchInfo { type patch; }}
+                wall        { level (0 0); patchInfo { type wall; }}
+                front       { level (0 0); patchInfo { type wall; }}
+                back        { level (0 0); patchInfo { type wall; }}
+            }
+        }
+    }
+
+    //- This angle is used for the second refinement stage such as:
+    //  inlet { level (1 3); }:
+    //  >> The patch is refined by 1 level everywhere
+    //  >> the patch is refined by 2 levels everywhere the angle holdes
+    //  >> the patch is refined by 3 levels everywhere the angle still holdes
+    //  after the second refinement; so maximum 3 levels
+    //  If one uses { level (3 3) }, this angle does not do anything based
+    //  on the fact that the whole patch is refined by 3 everywhere
+    resolveFeatureAngle 24;
+
+    refinementRegions
+    {
+        //- We can refine regions too such as inside, outside and a 
+        //  distance to the region surface
+    }
+
+    //- Clear. Defines the mesh of interest. E.g. meshing a sphere inside
+    //  a channel. Once the point is inside, only the sphere is meshed
+    //  and everything around is cut of. Is the point outside, the sphere
+    //  volume is cut of the mesh around
+    locationInMesh (0.00 0.000 0.0);
+
+    //- Free standing faceZones allowed or not. Important for AMI/ACMI
+    //  boundary condition generation via snappyHexMesh and others such as
+    //  multi-region meshing
+    allowFreeStandingZoneFaces false;
+}
+
+
+
+// Settings for the snapping.
+snapControls
+{
+    //- Smoothing iteration. The mesh gets displaced to the surface
+    nSmoothPatch 4;
+
+    //- Important for features and snapping. Finding correcpsonding points
+    //  and lines / surfaces of the triangulated data file. If you run into
+    //  a lot of W A R N I N G S - no point found on (xyz) you can increase
+    //  the tolerance. Check always your mesh.
+    tolerance 1.1;
+
+    nSolveIter 100;
+    nRelaxIter 5;
+
+    // Feature snapping
+
+        nFeatureSnapIter 10;
+
+        //- Detect (geometric) features by sampling the surface
+        implicitFeatureSnap false;
+
+        //- Use own generated feature edge mesh for snapping
+        explicitFeatureSnap true;
+
+        //- For multi region meshes
+        multiRegionFeatureSnap false;
+}
+
+
+
+// Settings for the layer addition.
+addLayersControls
+{
+    // Important for the layer generation. False means that one has to give
+    // the values in meter such as finalLayerThickness 0.001 >> 1 mm
+    // If true, the values are relative to the cell thickness such as:
+    // the given length of a cell (normal to the surface) is 0.01 m while 
+    // specifing finalLayerThickness of 0.8 means that the final layer thickness
+    // is 0.008 m
+    relativeSizes false;
+
+    layers
+    {
+        // The patch name onto which layers should be added
+        wall
+        {
+            //- Within this dictionary, you can specify 
+            //  expansionRation for each patch
+            //  finalThickness for each patch
+            //  thickness for each patch
+            //  number of layers added to the patch
+            //  firstLayerThickness
+            //  minThickness
+
+            //- Keep in mind that you can only specify:
+            //  expansionRatio in combination with finalLayerThickness
+            //  expansionRatio in combination with firstLayerThickness
+            //  overall thickness and firstLayerThickness
+            //  overall thickness and finalThickness
+            //  overall thickness and expansionRatio
+
+            //- We just add two layers based on the quantities of the
+            //  cells close and near to the windows. For more layers it is
+            //  a good choice to refine the layered surface finer:
+            //  The used entry:
+            //  wall 
+            //  {
+            //      level (0 0);
+            //      patchInfo { type patch;}
+            //  }
+            //
+            //  Becomes:
+            //  wall 
+            //  {
+            //      level (2 2);
+            //      patchInfo { type patch;}
+            //  }
+            //
+            // Doing so, will do the following:
+            //  The cells close to the windows are already finer, thus
+            //  the layers can be much less
+            //  There are more cells available for the displacement motion, thus
+            //  the whole mesh can deform better -> less collaping of generated
+            //  layers and a better mesh quality
+            //  However, this depend always on your geometry
+            nSurfaceLayers 2;
+        }
+    }
+
+    //- Explanation given in the original files
+    expansionRatio 1.3;
+    finalLayerThickness 0.0001;
+    minThickness 0.00005;
+
+
+    //- Controls the layer generation. A bit tricky as one has to know
+    //  the algorithm behind it
+    nGrow 0; // Should be 0, otherwise layers are colapsed
+    featureAngle 75; // > 60 grad provides good match near the 90 grad corners
+    nRelaxIter 8;// 3;
+    nSmoothSurfaceNormals 6;//1;
+    nSmoothNormals 8;//3;
+    nSmoothThickness 10;
+    maxFaceThicknessRatio 0.8;//0.5;
+    maxThicknessToMedialRatio 0.6;//0.3;
+    minMedianAxisAngle 90;
+    nMedialAxisIter 4;
+    nBufferCellsNoExtrude 0;
+
+    nLayerIter 50;
+    nRelaxedIter 20;
+}
+
+
+
+meshQualityControls
+{
+    // This file is in system/ and contains the default set values for the
+    // mesh quality set-up as well as user defined (these values overwrites
+    // the default values
+    #include "meshQualityDict"
+
+    // Optional : some meshing phases allow usage of relaxed rules.
+    // See e.g. addLayersControls::nRelaxedIter.
+    relaxed
+    {
+        //- Maximum non-orthogonality allowed. Set to 180 to disable.
+        maxNonOrtho j80;
+    }
+
+    // Advanced
+
+    //- Number of error distribution iterations
+    nSmoothScale 4;
+    //- amount to scale back displacement at error points
+    errorReduction 0.75;
+}
+
+
+writeFlags
+(
+    scalarLevels    // write volScalarField with cellLevel for postprocessing
+    layerSets       // write cellSets, faceSets of faces in layer
+    layerFields     // write volScalarField for layer coverage
+);
+
+mergeTolerance 1E-6;
+
+
+// ************************************************************************* //

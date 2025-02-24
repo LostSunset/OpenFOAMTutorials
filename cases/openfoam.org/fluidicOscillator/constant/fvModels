@@ -1,0 +1,40 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  www.openfoam.org                      |
+|   \\  /    A nd           | Version:  12                                    |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvModels;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+sourceForS
+{
+    type            semiImplicitSource;
+    active          true;
+
+    //- Add the source to the cells given in the cellZone
+    selectionMode   cellZone;
+    cellZone        c0;
+
+    //- Take care of the specific vs absolute value
+    volumeMode      specific;
+    sources
+    {
+        //- Value 5 starting at time t = 0
+        S
+        {
+            explicit 5;
+            implicit 0;
+        }
+    }
+}
+
+// ************************************************************************* //

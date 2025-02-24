@@ -1,0 +1,19 @@
+Making dependency list for source file laplacianDyMFoam.C
+g++ -std=c++11 -m64 -pthread -DOPENFOAM=2112 -DWM_DP -DWM_LABEL_SIZE=32 -Wall -Wextra -Wold-style-cast -Wnon-virtual-dtor -Wno-unused-parameter -Wno-invalid-offsetof -Wno-attributes -Wno-unknown-pragmas  -O3  -DNoRepository -ftemplate-depth-100 -I/home/shorty/OpenFOAM/ESI/OpenFOAM-v2112/src/finiteVolume/lnInclude -I/home/shorty/OpenFOAM/ESI/OpenFOAM-v2112/src/meshTools/lnInclude -I/home/shorty/OpenFOAM/ESI/OpenFOAM-v2112/src/dynamicFvMesh/lnInclude -iquote. -IlnInclude -I/home/shorty/OpenFOAM/ESI/OpenFOAM-v2112/src/OpenFOAM/lnInclude -I/home/shorty/OpenFOAM/ESI/OpenFOAM-v2112/src/OSspecific/POSIX/lnInclude   -fPIC -c laplacianDyMFoam.C -o Make/linux64GccDPInt32Opt/laplacianDyMFoam.o
+In file included from laplacianDyMFoam.C:47:
+createFields.H: In function ‘int main(int, char**)’:
+createFields.H:37:5: warning: ‘Foam::dimensioned<Type>::dimensioned(Foam::Istream&) [with Type = double]’ is deprecated: Since 2018-11 [-Wdeprecated-declarations]
+   37 |     );
+      |     ^
+In file included from /home/shorty/OpenFOAM/ESI/OpenFOAM-v2112/src/OpenFOAM/lnInclude/dimensionedType.H:571,
+                 from /home/shorty/OpenFOAM/ESI/OpenFOAM-v2112/src/OpenFOAM/lnInclude/dimensionedScalar.H:41,
+                 from /home/shorty/OpenFOAM/ESI/OpenFOAM-v2112/src/OpenFOAM/lnInclude/TimeState.H:41,
+                 from /home/shorty/OpenFOAM/ESI/OpenFOAM-v2112/src/OpenFOAM/lnInclude/Time.H:50,
+                 from /home/shorty/OpenFOAM/ESI/OpenFOAM-v2112/src/finiteVolume/lnInclude/fvCFD.H:4,
+                 from laplacianDyMFoam.C:32:
+/home/shorty/OpenFOAM/ESI/OpenFOAM-v2112/src/OpenFOAM/lnInclude/dimensionedType.C:305:1: note: declared here
+  305 | Foam::dimensioned<Type>::dimensioned(Istream& is)
+      | ^~~~
+g++ -std=c++11 -m64 -pthread -DOPENFOAM=2112 -DWM_DP -DWM_LABEL_SIZE=32 -Wall -Wextra -Wold-style-cast -Wnon-virtual-dtor -Wno-unused-parameter -Wno-invalid-offsetof -Wno-attributes -Wno-unknown-pragmas  -O3  -DNoRepository -ftemplate-depth-100 -I/home/shorty/OpenFOAM/ESI/OpenFOAM-v2112/src/finiteVolume/lnInclude -I/home/shorty/OpenFOAM/ESI/OpenFOAM-v2112/src/meshTools/lnInclude -I/home/shorty/OpenFOAM/ESI/OpenFOAM-v2112/src/dynamicFvMesh/lnInclude -iquote. -IlnInclude -I/home/shorty/OpenFOAM/ESI/OpenFOAM-v2112/src/OpenFOAM/lnInclude -I/home/shorty/OpenFOAM/ESI/OpenFOAM-v2112/src/OSspecific/POSIX/lnInclude   -fPIC -Xlinker --add-needed -Xlinker --no-as-needed  Make/linux64GccDPInt32Opt/laplacianDyMFoam.o -L/home/shorty/OpenFOAM/ESI/OpenFOAM-v2112/platforms/linux64GccDPInt32Opt/lib \
+    -lfiniteVolume -lmeshTools -ldynamicFvMesh -lOpenFOAM -ldl  \
+     -lm -o /home/shorty/OpenFOAM/shorty-v2112/platforms/linux64GccDPInt32Opt/bin/laplacianDyMFoam
